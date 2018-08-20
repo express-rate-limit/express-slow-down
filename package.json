@@ -1,15 +1,15 @@
 {
-  "name": "express-rate-limit",
-  "version": "2.12.2",
-  "description": "Basic IP rate-limiting middleware for Express. Use to limit repeated requests to public APIs and/or endpoints such as password reset.",
-  "homepage": "https://github.com/nfriedly/express-rate-limit",
+  "name": "express-slow-down",
+  "version": "0.0.0",
+  "description": "Basic IP rate-limiting middleware for Express that slows down responses rather than blocking the user.",
+  "homepage": "https://github.com/nfriedly/express-slow-down",
   "author": {
     "name": "Nathan Friedly",
     "url": "http://nfriedly.com/"
   },
-  "repository": "nfriedly/express-rate-limit",
+  "repository": "nfriedly/express-slow-down",
   "license": "MIT",
-  "main": "lib/express-rate-limit.js",
+  "main": "lib/express-slow-down.js",
   "files": [
     "lib/"
   ],

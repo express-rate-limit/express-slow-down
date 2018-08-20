@@ -2,11 +2,11 @@
 var express = require("express");
 var assert = require("assert");
 var request = require("supertest");
-var rateLimit = require("../lib/express-rate-limit.js");
+var rateLimit = require("../lib/express-slow-down.js");
 
 // todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
 
-describe("express-rate-limit node module", function() {
+describe("express-slow-down node module", function() {
   var start, delay, message, app;
 
   beforeEach(function() {
