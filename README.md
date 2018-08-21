@@ -17,6 +17,8 @@ Note: this module does not share state with other processes/servers by default. 
 - [Redis Store](https://npmjs.com/package/rate-limit-redis)
 - [Memcached Store](https://npmjs.org/package/rate-limit-memcached)
 
+Note: when using express-slow-down and express-rate-limit with an external store, you'll need to create two instances of the store and provide different prefixes so that they don't double-count requests.
+
 ## Install
 
 ```sh
@@ -99,6 +101,7 @@ function (req, res, options) {
 ```
 
 - **store**: The storage to use when persisting rate limit attempts. By default, the [MemoryStore](lib/memory-store.js) is used.
+  - Note: when using express-slow-down and express-rate-limit with an external store, you'll need to create two instances of the store and provide different prefixes so that they don't double-count requests.
 
 ## License
 
