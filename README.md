@@ -100,9 +100,6 @@ function (req, res, options) {
 
 - **store**: The storage to use when persisting rate limit attempts. By default, the [MemoryStore](lib/memory-store.js) is used.
 
-The `delayAfter` and `delayMs` options were written for human-facing pages such as login and password reset forms.
-For public APIs, setting these to `0` (disabled) and relying on only `windowMs` and `max` for rate-limiting usually makes the most sense.
-
 ## License
 
 MIT © [Nathan Friedly](http://nfriedly.com/)
