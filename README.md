@@ -1,9 +1,9 @@
 # Express Slow Down
 
-[![Build Status](https://secure.travis-ci.org/nfriedly/express-rate-limit.png?branch=master)](http://travis-ci.org/nfriedly/express-rate-limit)
-[![NPM version](http://badge.fury.io/js/express-rate-limit.png)](https://npmjs.org/package/express-rate-limit "View this project on NPM")
-[![Dependency Status](https://david-dm.org/nfriedly/express-rate-limit.png?theme=shields.io)](https://david-dm.org/nfriedly/express-rate-limit)
-[![Development Dependency Status](https://david-dm.org/nfriedly/express-rate-limit/dev-status.png?theme=shields.io)](https://david-dm.org/nfriedly/express-rate-limit#info=devDependencies)
+[![Build Status](https://secure.travis-ci.org/nfriedly/express-slow-down.png?branch=master)](http://travis-ci.org/nfriedly/express-slow-down)
+[![NPM version](http://badge.fury.io/js/express-slow-down.png)](https://npmjs.org/package/express-slow-down "View this project on NPM")
+[![Dependency Status](https://david-dm.org/nfriedly/express-slow-down.png?theme=shields.io)](https://david-dm.org/nfriedly/express-slow-down)
+[![Development Dependency Status](https://david-dm.org/nfriedly/express-slow-down/dev-status.png?theme=shields.io)](https://david-dm.org/nfriedly/express-slow-down#info=devDependencies)
 
 Basic rate-limiting middleware for Express that slows down responses rather than blocking them outright. Use to limit repeated requests to public APIs and/or endpoints such as password reset.
 
