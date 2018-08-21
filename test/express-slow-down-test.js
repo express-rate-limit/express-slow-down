@@ -300,7 +300,7 @@ describe("express-slow-down node module", function() {
           if (err) {
             return done(err);
           }
-          limiter.resetIp(myIp);
+          limiter.resetKey(myIp);
           fastRequest(done, done);
         });
       });

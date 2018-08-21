@@ -9,8 +9,7 @@ Basic rate-limiting middleware for Express that slows down responses rather than
 
 Plays nice with [Express Rate Limit](https://npmjs.org/package/express-rate-limit)
 
-Note: this module does not share state with other processes/servers by default.
-If you need a more robust solution, I recommend using an external store. This module is based on Express Rate Limit and can work with it's stores:
+Note: this module does not share state with other processes/servers by default. This module was extracted from Express Rate Limit 2.x and can work with it's stores:
 
 ### Stores
 
