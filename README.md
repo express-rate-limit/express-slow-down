@@ -22,7 +22,7 @@ Note: when using express-slow-down and express-rate-limit with an external store
 ## Install
 
 ```sh
-$ npm install --save express-rate-limit
+$ npm install --save express-slow-down
 ```
 
 ## Usage
