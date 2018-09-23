@@ -1,6 +1,6 @@
 {
   "name": "express-slow-down",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Basic IP rate-limiting middleware for Express that slows down responses rather than blocking the user.",
   "homepage": "https://github.com/nfriedly/express-slow-down",
   "author": {
