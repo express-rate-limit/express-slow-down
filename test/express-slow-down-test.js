@@ -2,15 +2,16 @@
 var express = require("express");
 var assert = require("assert");
 var request = require("supertest");
-var rateLimit = require("../lib/express-slow-down.js");
+var slowDown = require("../lib/express-slow-down.js");
 
 // todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
 
 describe("express-slow-down node module", function() {
-  var start, delay, app;
+  var start, delay, app, longResponseClosed;
 
   beforeEach(function() {
     start = Date.now();
+    longResponseClosed = false;
   });
 
   afterEach(function() {
@@ -22,8 +23,8 @@ describe("express-slow-down node module", function() {
     app.all("/", limit, function(req, res) {
       if (
         checkVar &&
-        req.rateLimit.current === 1 &&
-        req.rateLimit.remaining === 4
+        req.slowDown.current === 1 &&
+        req.slowDown.remaining === 4
       ) {
         app.end(function(err, res) {
           if (err) {
@@ -40,6 +41,23 @@ describe("express-slow-down node module", function() {
       res.setHeader("x-your-ip", req.ip);
       res.status(204).send("");
     });
+
+    app.all("/bad_response_status", limit, function(req, res) {
+      res.status(403).send();
+    });
+    app.all("/long_response", limit, function(req, res) {
+      const timerId = setTimeout(() => res.send("response!"), 100);
+      res.on("close", () => {
+        longResponseClosed = true;
+        clearTimeout(timerId);
+      });
+    });
+    app.all("/response_emit_error", limit, function(req, res) {
+      res.on("error", () => {
+        res.end();
+      });
+      res.emit("error", new Error());
+    });
     return app;
   }
 
@@ -48,16 +66,24 @@ describe("express-slow-down node module", function() {
   function MockStore() {
     this.incr_was_called = false;
     this.resetKey_was_called = false;
+    this.decrement_was_called = false;
+    this.counter = 0;
 
-    var self = this;
-    this.incr = function(key, cb) {
-      self.incr_was_called = true;
+    this.incr = (key, cb) => {
+      this.counter++;
+      this.incr_was_called = true;
 
-      cb(null, 1);
+      cb(null, this.counter);
     };
 
-    this.resetKey = function() {
-      self.resetKey_was_called = true;
+    this.decrement = () => {
+      this.counter--;
+      this.decrement_was_called = true;
+    };
+
+    this.resetKey = () => {
+      this.resetKey_was_called = true;
+      this.counter = 0;
     };
   }
 
@@ -87,7 +113,7 @@ describe("express-slow-down node module", function() {
 
   it("should not allow the use of a store that is not valid", function(done) {
     try {
-      rateLimit({
+      slowDown({
         store: new InvalidStore()
       });
     } catch (e) {
@@ -101,7 +127,7 @@ describe("express-slow-down node module", function() {
     var store = new MockStore();
 
     createAppWith(
-      rateLimit({
+      slowDown({
         store: store
       })
     );
@@ -117,7 +143,7 @@ describe("express-slow-down node module", function() {
 
   it("should call resetKey on the store", function(done) {
     var store = new MockStore();
-    var limiter = rateLimit({
+    var limiter = slowDown({
       store: store
     });
 
@@ -131,7 +157,7 @@ describe("express-slow-down node module", function() {
   });
 
   it("should allow the first request with minimal delay", function(done) {
-    createAppWith(rateLimit());
+    createAppWith(slowDown());
     fastRequest(done, function(/* err, res */) {
       delay = Date.now() - start;
       if (delay > 99) {
@@ -144,7 +170,7 @@ describe("express-slow-down node module", function() {
 
   it("should apply a small delay to the second request", function(done) {
     createAppWith(
-      rateLimit({
+      slowDown({
         delayMs: 100
       })
     );
@@ -168,7 +194,7 @@ describe("express-slow-down node module", function() {
 
   it("should apply a larger delay to the subsequent request", function(done) {
     createAppWith(
-      rateLimit({
+      slowDown({
         delayMs: 100
       })
     );
@@ -191,7 +217,7 @@ describe("express-slow-down node module", function() {
 
   it("should allow delayAfter requests before delaying responses", function(done) {
     createAppWith(
-      rateLimit({
+      slowDown({
         delayMs: 100,
         delayAfter: 2
       })
@@ -221,7 +247,7 @@ describe("express-slow-down node module", function() {
 
   it("should (eventually) return to full speed", function(done) {
     createAppWith(
-      rateLimit({
+      slowDown({
         delayMs: 100,
         max: 1,
         windowMs: 50
@@ -244,7 +270,7 @@ describe("express-slow-down node module", function() {
 
   it("should work repeatedly (issues #2 & #3)", function(done) {
     createAppWith(
-      rateLimit({
+      slowDown({
         delayMs: 100,
         max: 2,
         windowMs: 50
@@ -280,7 +306,7 @@ describe("express-slow-down node module", function() {
   });
 
   it("should allow individual IP's to be reset", function(done) {
-    var limiter = rateLimit({
+    var limiter = slowDown({
       delayMs: 100,
       max: 1,
       windowMs: 50
@@ -307,7 +333,7 @@ describe("express-slow-down node module", function() {
   });
 
   it("should allow custom key generators", function(done) {
-    var limiter = rateLimit({
+    var limiter = slowDown({
       delayMs: 0,
       max: 2,
       keyGenerator: function(req, res) {
@@ -339,7 +365,7 @@ describe("express-slow-down node module", function() {
   });
 
   it("should allow custom skip function", function(done) {
-    var limiter = rateLimit({
+    var limiter = slowDown({
       delayMs: 0,
       max: 2,
       skip: function(req, res) {
@@ -357,10 +383,130 @@ describe("express-slow-down node module", function() {
   });
 
   it("should pass current hits and remaining hits to the next function", function(done) {
-    var limiter = rateLimit({
+    var limiter = slowDown({
       headers: false
     });
     createAppWith(limiter, true, done, done);
     done();
+  });
+  it("should decrement hits with success response and skipSuccessfulRequests", done => {
+    const store = new MockStore();
+    createAppWith(
+      slowDown({
+        skipSuccessfulRequests: true,
+        store: store
+      })
+    );
+    fastRequest(done, function() {
+      if (!store.decrement_was_called) {
+        done(new Error("decrement was not called on the store"));
+      } else {
+        done();
+      }
+    });
+  });
+  it("should decrement hits with failed response and skipFailedRequests", done => {
+    const store = new MockStore();
+    createAppWith(
+      slowDown({
+        skipFailedRequests: true,
+        store: store
+      })
+    );
+    request(app)
+      .get("/bad_response_status")
+      .expect(403)
+      .end(() => {
+        if (!store.decrement_was_called) {
+          done(new Error("decrement was not called on the store"));
+        } else {
+          done();
+        }
+      });
+  });
+  it("should decrement hits with closed response and skipFailedRequests", done => {
+    const store = new MockStore();
+    createAppWith(
+      slowDown({
+        skipFailedRequests: true,
+        store: store
+      })
+    );
+    const checkStoreDecremented = () => {
+      if (longResponseClosed) {
+        if (!store.decrement_was_called) {
+          done(new Error("decrement was not called on the store"));
+        } else {
+          done();
+        }
+      } else {
+        setImmediate(checkStoreDecremented);
+      }
+    };
+    request(app)
+      .get("/long_response")
+      .timeout({
+        response: 10
+      })
+      .end(checkStoreDecremented);
+  });
+  it("should decrement hits with response emitting error and skipFailedRequests", done => {
+    const store = new MockStore();
+    createAppWith(
+      slowDown({
+        skipFailedRequests: true,
+        store: store
+      })
+    );
+    request(app)
+      .get("/response_emit_error")
+      .end(() => {
+        if (!store.decrement_was_called) {
+          done(new Error("decrement was not called on the store"));
+        } else {
+          done();
+        }
+      });
+  });
+
+  it("should not decrement hits with success response and skipFailedRequests", done => {
+    const store = new MockStore();
+    createAppWith(
+      slowDown({
+        skipFailedRequests: true,
+        store: store
+      })
+    );
+
+    fastRequest(done, function() {
+      if (store.decrement_was_called) {
+        done(new Error("decrement was called on the store"));
+      } else {
+        done();
+      }
+    });
+  });
+
+  it("should decrement hits with a failure and skipFailedRequests", done => {
+    const store = new MockStore();
+    const app = createAppWith(
+      slowDown({
+        store: store,
+        skipFailedRequests: true
+      })
+    );
+    request(app)
+      .get("/bad_response_status")
+      .expect(403)
+      .end(function(err /*, res*/) {
+        if (err) {
+          return done(err);
+        }
+        if (!store.decrement_was_called) {
+          done(new Error("decrement was not called on the store"));
+        } else {
+          done();
+        }
+      });
   });
 });
