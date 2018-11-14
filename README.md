@@ -67,7 +67,15 @@ app.post("/reset-password/", resetPasswordSpeedLimiter, function(req, res) {
 });
 ```
 
-A `req.slowDown` property is added to all requests with the `current`, and `remaining` number of requests for usage in your application code.
+## `req.slowDown`
+
+A `req.slowDown` property is added to all requests with the following fields:
+
+- `limit`: The options.delayAfter value (defaults to 1)
+- `current`: The number of requests in the current window
+- `remaining`: The number of requests remaining before rate-limiting begins
+- `resetTime`: When the window will reset and current will return to 0, and remaining will return to limit (in milliseconds since epoch - compare to Date.now()). Note: this field depends on store support. It will be undefined if the store does not provide the value.
+- `delay`: Amount of delay imposed on current request (milliseconds)
 
 ## Configuration
 
