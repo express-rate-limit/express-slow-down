@@ -30,12 +30,12 @@ $ npm install --save express-slow-down
 For an API-only server where the rules should be applied to all requests:
 
 ```js
-const slowDown = require('express-slow-down');
+const slowDown = require("express-slow-down");
 
-app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
+app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
 
 const speedLimiter = slowDown({
-  windowMs: 15*60*1000, // 15 minutes
+  windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 100, // allow 100 requests per 15 minutes, then...
   delayMs: 500 // begin adding 500ms of delay per request above 100:
   // request # 101 is delayed by  500ms
@@ -80,7 +80,7 @@ A `req.slowDown` property is added to all requests with the following fields:
 ## Configuration
 
 - **windowMs**: milliseconds - how long to keep records of requests in memory. Defaults to `60000` (1 minute).
-- **delayAfter**: max number of connections during `windowMs` before starting to delay responses. Defaults to `1`. Set to `0` to disable delaying.
+- **delayAfter**: max number of connections during `windowMs` before starting to delay responses. Number or function that returns a number. Defaults to `1`. Set to `0` to disable delaying.
 - **delayMs**: milliseconds - how long to delay the response, multiplied by (number of recent hits - `delayAfter`). Defaults to `1000` (1 second). Set to `0` to disable delaying.
 - **skipFailedRequests**: when `true` failed requests (response status >= 400) won't be counted. Defaults to `false`.
 - **skipSuccessfulRequests**: when `true` successful requests (response status < 400) won't be counted. Defaults to `false`.
