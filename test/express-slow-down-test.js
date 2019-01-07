@@ -1,13 +1,13 @@
 "use strict";
-var express = require("express");
-var assert = require("assert");
-var request = require("supertest");
-var slowDown = require("../lib/express-slow-down.js");
+const express = require("express");
+const assert = require("assert");
+const request = require("supertest");
+const slowDown = require("../lib/express-slow-down.js");
 
 // todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
 
 describe("express-slow-down node module", function() {
-  var start, delay, app, longResponseClosed;
+  let start, delay, app, longResponseClosed;
 
   beforeEach(function() {
     start = Date.now();
@@ -88,7 +88,7 @@ describe("express-slow-down node module", function() {
   }
 
   function fastRequest(errorHandler, successHandler, key) {
-    var req = request(app).get("/");
+    let req = request(app).get("/");
     // add optional key parameter
     if (key) {
       req = req.query({ key: key });
@@ -124,11 +124,11 @@ describe("express-slow-down node module", function() {
   });
 
   it("should call incr on the store", function(done) {
-    var store = new MockStore();
+    const store = new MockStore();
 
     createAppWith(
       slowDown({
-        store: store
+        store
       })
     );
 
@@ -142,9 +142,9 @@ describe("express-slow-down node module", function() {
   });
 
   it("should call resetKey on the store", function(done) {
-    var store = new MockStore();
-    var limiter = slowDown({
-      store: store
+    const store = new MockStore();
+    const limiter = slowDown({
+      store
     });
 
     limiter.resetKey("key");
@@ -245,6 +245,36 @@ describe("express-slow-down node module", function() {
     });
   });
 
+  it("should allow delayAfter to be a function", function(done) {
+    createAppWith(
+      slowDown({
+        delayMs: 100,
+        delayAfter: () => 2
+      })
+    );
+    fastRequest(done, function(/* err, res */) {
+      if (delay > 50) {
+        done(new Error("First request took too long: " + delay + "ms"));
+      }
+    });
+    fastRequest(done, function(/* err, res */) {
+      if (delay > 100) {
+        done(new Error("Second request took too long: " + delay + "ms"));
+      }
+    });
+    fastRequest(done, function(/* err, res */) {
+      if (delay < 100) {
+        return done(
+          new Error("Second request was served too fast: " + delay + "ms")
+        );
+      }
+      if (delay > 150) {
+        return done(new Error("Second request took too long: " + delay + "ms"));
+      }
+      done();
+    });
+  });
+
   it("should (eventually) return to full speed", function(done) {
     createAppWith(
       slowDown({
@@ -306,7 +336,7 @@ describe("express-slow-down node module", function() {
   });
 
   it("should allow individual IP's to be reset", function(done) {
-    var limiter = slowDown({
+    const limiter = slowDown({
       delayMs: 100,
       max: 1,
       windowMs: 50
@@ -317,7 +347,7 @@ describe("express-slow-down node module", function() {
       .get("/ip")
       .expect(204)
       .end(function(err, res) {
-        var myIp = res.headers["x-your-ip"];
+        const myIp = res.headers["x-your-ip"];
         if (!myIp) {
           return done(new Error("unable to determine local IP"));
         }
@@ -333,14 +363,14 @@ describe("express-slow-down node module", function() {
   });
 
   it("should allow custom key generators", function(done) {
-    var limiter = slowDown({
+    const limiter = slowDown({
       delayMs: 0,
       max: 2,
       keyGenerator: function(req, res) {
         assert.ok(req);
         assert.ok(res);
 
-        var key = req.query.key;
+        const { key } = req.query;
         assert.ok(key);
 
         return key;
@@ -365,7 +395,7 @@ describe("express-slow-down node module", function() {
   });
 
   it("should allow custom skip function", function(done) {
-    var limiter = slowDown({
+    const limiter = slowDown({
       delayMs: 0,
       max: 2,
       skip: function(req, res) {
@@ -383,7 +413,7 @@ describe("express-slow-down node module", function() {
   });
 
   it("should pass current hits and remaining hits to the next function", function(done) {
-    var limiter = slowDown({
+    const limiter = slowDown({
       headers: false
     });
     createAppWith(limiter, true, done, done);
@@ -394,7 +424,7 @@ describe("express-slow-down node module", function() {
     createAppWith(
       slowDown({
         skipSuccessfulRequests: true,
-        store: store
+        store
       })
     );
     fastRequest(done, function() {
@@ -410,7 +440,7 @@ describe("express-slow-down node module", function() {
     createAppWith(
       slowDown({
         skipFailedRequests: true,
-        store: store
+        store
       })
     );
     request(app)
@@ -429,7 +459,7 @@ describe("express-slow-down node module", function() {
     createAppWith(
       slowDown({
         skipFailedRequests: true,
-        store: store
+        store
       })
     );
     const checkStoreDecremented = () => {
@@ -455,7 +485,7 @@ describe("express-slow-down node module", function() {
     createAppWith(
       slowDown({
         skipFailedRequests: true,
-        store: store
+        store
       })
     );
     request(app)
@@ -474,7 +504,7 @@ describe("express-slow-down node module", function() {
     createAppWith(
       slowDown({
         skipFailedRequests: true,
-        store: store
+        store
       })
     );
 
@@ -491,7 +521,7 @@ describe("express-slow-down node module", function() {
     const store = new MockStore();
     const app = createAppWith(
       slowDown({
-        store: store,
+        store,
         skipFailedRequests: true
       })
     );
