@@ -215,6 +215,31 @@ describe("express-slow-down node module", function() {
     });
   });
 
+  it("should apply a cap of maxDelayMs on the the delay", function(done) {
+    createAppWith(
+      slowDown({
+        delayAfter: 1,
+        delayMs: 100,
+        maxDelayMs: 200
+      })
+    );
+    fastRequest(done); // 1st - no delay
+    fastRequest(done); // 2nd - 100ms delay
+    fastRequest(done); // 3rd - 200ms delay
+    fastRequest(done, function(/* err, res */) {
+      // should cap the delay so the 4th request delays about 200ms instead of 300ms
+      if (delay < 200) {
+        return done(
+          new Error("Fourth request was served too fast: " + delay + "ms")
+        );
+      }
+      if (delay > 300) {
+        return done(new Error("Fourth request took too long: " + delay + "ms"));
+      }
+      done();
+    });
+  });
+
   it("should allow delayAfter requests before delaying responses", function(done) {
     createAppWith(
       slowDown({
