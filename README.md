@@ -102,7 +102,7 @@ A `req.slowDown` property is added to all requests with the following fields:
   // ...
   // 20th request - 19000ms delay
   // 21st request - 20000ms delay
-  // 22st request - 20000ms delay
+  // 22nd request - 20000ms delay
   // 23rd request - 20000ms delay
   // 24th request - 20000ms delay <-- will not increase past 20000ms
   // ...
