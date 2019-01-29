@@ -82,31 +82,57 @@ A `req.slowDown` property is added to all requests with the following fields:
 - **windowMs**: milliseconds - how long to keep records of requests in memory. Defaults to `60000` (1 minute).
 - **delayAfter**: max number of connections during `windowMs` before starting to delay responses. Number or function that returns a number. Defaults to `1`. Set to `0` to disable delaying.
 - **delayMs**: milliseconds - how long to delay the response, multiplied by (number of recent hits - `delayAfter`). Defaults to `1000` (1 second). Set to `0` to disable delaying.
+- **maxDelayMs**: milliseconds - maximum value for `delayMs` after many consecutive attempts, that is, after the n-th request, the delay will be always `maxDelayMs`. Important when your application is running behind a load balancer or reverse proxy that has a request timeout. Defaults to `Infinity`.
+
+  ```javascript
+  // Example
+
+  // Given:
+  {
+      delayAfter: 1,
+      delayMs: 1000,
+      maxDelayMs: 20000,
+  }
+
+  // Results will be:
+  // 1st request - no delay
+  // 2nd request - 1000ms delay
+  // 3rd request - 2000ms delay
+  // 4th request - 3000ms delay
+  // ...
+  // 20th request - 19000ms delay
+  // 21st request - 20000ms delay
+  // 22st request - 20000ms delay
+  // 23rd request - 20000ms delay
+  // 24th request - 20000ms delay <-- will not increase past 20000ms
+  // ...
+  ```
+
 - **skipFailedRequests**: when `true` failed requests (response status >= 400) won't be counted. Defaults to `false`.
 - **skipSuccessfulRequests**: when `true` successful requests (response status < 400) won't be counted. Defaults to `false`.
 - **keyGenerator**: Function used to generate keys. By default user IP address (req.ip) is used. Defaults:
 
-```js
-function (req /*, res*/) {
-    return req.ip;
-}
-```
+  ```js
+  function (req /*, res*/) {
+      return req.ip;
+  }
+  ```
 
 - **skip**: Function used to skip requests. Returning true from the function will skip limiting for that request. Defaults:
 
-```js
-function (/*req, res*/) {
-    return false;
-}
-```
+  ```js
+  function (/*req, res*/) {
+      return false;
+  }
+  ```
 
 - **onLimitReached**: Function to listen the first time the limit is reached within windowMs. Defaults:
 
-```js
-function (req, res, options) {
+  ```js
+  function (req, res, options) {
   /* empty */
-}
-```
+  }
+  ```
 
 - **store**: The storage to use when persisting rate limit attempts. By default, the [MemoryStore](lib/memory-store.js) is used.
   - Note: when using express-slow-down and express-rate-limit with an external store, you'll need to create two instances of the store and provide different prefixes so that they don't double-count requests.
