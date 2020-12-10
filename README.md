@@ -136,6 +136,7 @@ A `req.slowDown` property is added to all requests with the following fields:
 
 - **store**: The storage to use when persisting rate limit attempts. By default, the [MemoryStore](lib/memory-store.js) is used.
   - Note: when using express-slow-down and express-rate-limit with an external store, you'll need to create two instances of the store and provide different prefixes so that they don't double-count requests.
+- **headers**: Add `X-SlowDown-Limit`, `X-SlowDown-Remaining`, and if the store supports it, `X-SlowDown-Reset` headers to all responses. Modeled after the equivalent headers in express-rate-limit. Default: `false`
 
 ## License
 
