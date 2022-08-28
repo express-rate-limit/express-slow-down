@@ -564,4 +564,34 @@ describe("express-slow-down node module", function () {
         }
       });
   });
+
+  it("should call on onMaxDelayReached function after delay pass limit max delay", function (done) {
+    createAppWith(
+      slowDown({
+        delayAfter: 0,
+        delayMs: 100,
+        maxDelayMs: 200,
+        onMaxDelayReached: function () {
+          done();
+        },
+      })
+    );
+    fastRequest();
+    fastRequest();
+  });
+
+  it("onMaxDelayReached should not be called without maxDelayMs parameter been set", function (done) {
+    createAppWith(
+      slowDown({
+        delayAfter: 0,
+        delayMs: 100,
+        onMaxDelayReached: function () {
+          done(new Error());
+        },
+      })
+    );
+    fastRequest();
+    fastRequest();
+    done();
+  });
 });
