@@ -576,6 +576,21 @@ describe("express-slow-down node module", function () {
         },
       })
     );
+    fastRequest(done);
+    fastRequest(done);
+  });
+
+  it("should call on onMaxDelayReached function after delay pass limit max delay", function (done) {
+    createAppWith(
+      slowDown({
+        delayAfter: 0,
+        delayMs: 100,
+        maxDelayMs: 200,
+        onMaxDelayReached: function () {
+          done();
+        },
+      })
+    );
     fastRequest();
     fastRequest();
   });
@@ -586,7 +601,7 @@ describe("express-slow-down node module", function () {
         delayAfter: 0,
         delayMs: 100,
         onMaxDelayReached: function () {
-          done(new Error());
+          done(new Error("onMaxDelayReached was called unexpectedly"));
         },
       })
     );
