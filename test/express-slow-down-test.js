@@ -584,7 +584,7 @@ describe("express-slow-down node module", function () {
 
     setTimeout(() => {
       done();
-    }, 1000);
+    }, 200);
   });
 
   it("should not excute slow down timer in case of req end", (done) => {
@@ -605,6 +605,6 @@ describe("express-slow-down node module", function () {
 
     setTimeout(() => {
       done();
-    }, 1000);
+    }, 200);
   });
 });
