@@ -32,7 +32,8 @@
     "attack"
   ],
   "dependencies": {
-    "defaults": "^1.0.3"
+    "defaults": "^1.0.3",
+    "on-finished": "^2.4.1"
   },
   "devDependencies": {
     "eslint": "^7.15.0",

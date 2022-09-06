@@ -2,6 +2,7 @@
 const express = require("express");
 const assert = require("assert");
 const request = require("supertest");
+const eventEmitter = require("events");
 const slowDown = require("../lib/express-slow-down.js");
 
 // todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
@@ -563,5 +564,47 @@ describe("express-slow-down node module", function () {
           done();
         }
       });
+  });
+
+  it("should not excute slow down timer in case of req closed", (done) => {
+    const reqMock = new eventEmitter();
+    const resMock = {
+      setHeader: () => {},
+    };
+    const currentLimiterMiddleWare = slowDown({
+      delayAfter: 0,
+      delayMs: 100,
+      windowMs: 1000,
+    });
+    function next() {
+      done(new Error("setTimeout should not excute!"));
+    }
+    currentLimiterMiddleWare(reqMock, resMock, next);
+    reqMock.emit("close");
+
+    setTimeout(() => {
+      done();
+    }, 200);
+  });
+
+  it("should not excute slow down timer in case of req end", (done) => {
+    const reqMock = new eventEmitter();
+    const resMock = {
+      setHeader: () => {},
+    };
+    const currentLimiterMiddleWare = slowDown({
+      delayAfter: 0,
+      delayMs: 100,
+      windowMs: 1000,
+    });
+    function next() {
+      done(new Error("setTimeout should not excute!"));
+    }
+    currentLimiterMiddleWare(reqMock, resMock, next);
+    reqMock.emit("end");
+
+    setTimeout(() => {
+      done();
+    }, 200);
   });
 });
