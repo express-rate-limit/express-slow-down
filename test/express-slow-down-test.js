@@ -8,32 +8,15 @@ const slowDown = require("../lib/express-slow-down.js");
 // todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
 
 describe("express-slow-down node module", function () {
-  let start, delay, app, longResponseClosed;
+  let app, longResponseClosed;
 
   beforeEach(function () {
-    start = Date.now();
     longResponseClosed = false;
   });
 
-  afterEach(function () {
-    delay = null;
-  });
-
-  function createAppWith(limit, checkVar, errorHandler, successHandler) {
+  function createAppWith(limit) {
     app = express();
     app.all("/", limit, function (req, res) {
-      if (
-        checkVar &&
-        req.slowDown.current === 1 &&
-        req.slowDown.remaining === 4
-      ) {
-        app.end(function (err, res) {
-          if (err) {
-            return errorHandler(err);
-          }
-          return successHandler(null, res);
-        });
-      }
       res.send("response!");
     });
     // helper endpoint to know what ip test requests come from
@@ -102,7 +85,6 @@ describe("express-slow-down node module", function () {
         if (err) {
           return errorHandler(err);
         }
-        delay = Date.now() - start;
         if (successHandler) {
           successHandler(null, res);
         }
@@ -111,6 +93,19 @@ describe("express-slow-down node module", function () {
 
   // for the moment, we're not checking the speed within the response. but this should make it easy to add that check later.
   const slowRequest = fastRequest;
+
+  async function timedRequest() {
+    const start = Date.now();
+    await request(app)
+      .get("/")
+      .expect(200)
+      .expect(/response!/);
+    return Date.now() - start;
+  }
+
+  function sleep(t) {
+    return new Promise((resolve) => setTimeout(resolve, t));
+  }
 
   it("should not allow the use of a store that is not valid", function (done) {
     try {
@@ -124,8 +119,9 @@ describe("express-slow-down node module", function () {
     done(new Error("It allowed an invalid store"));
   });
 
-  it("should call incr on the store", function (done) {
+  it("should call incr on the store", async () => {
     const store = new MockStore();
+    assert(!store.incr_was_called);
 
     createAppWith(
       slowDown({
@@ -133,90 +129,56 @@ describe("express-slow-down node module", function () {
       })
     );
 
-    fastRequest(done, function () {
-      if (!store.incr_was_called) {
-        done(new Error("incr was not called on the store"));
-      } else {
-        done();
-      }
-    });
+    await request(app).get("/");
+    assert(store.incr_was_called);
   });
 
-  it("should call resetKey on the store", function (done) {
+  it("should call resetKey on the store", function () {
     const store = new MockStore();
     const limiter = slowDown({
       store,
     });
-
     limiter.resetKey("key");
-
-    if (!store.resetKey_was_called) {
-      done(new Error("resetKey was not called on the store"));
-    } else {
-      done();
-    }
+    assert(store.resetKey_was_called);
   });
 
-  it("should allow the first request with minimal delay", function (done) {
+  it("should allow the first request with minimal delay", async function () {
     createAppWith(slowDown());
-    fastRequest(done, function (/* err, res */) {
-      delay = Date.now() - start;
-      if (delay > 99) {
-        done(new Error("First request took too long: " + delay + "ms"));
-      } else {
-        done();
-      }
-    });
+    const delay = await timedRequest();
+    assert(delay < 100, "First request took too long: " + delay + "ms");
   });
 
-  it("should apply a small delay to the second request", function (done) {
+  it("should apply a small delay to the second request", async function () {
     createAppWith(
       slowDown({
         delayMs: 100,
       })
     );
-    fastRequest(done, function (/* err, res */) {
-      if (delay > 99) {
-        done(new Error("First request took too long: " + delay + "ms"));
-      }
-    });
-    fastRequest(done, function (/* err, res */) {
-      if (delay < 100) {
-        return done(
-          new Error("Second request was served too fast: " + delay + "ms")
-        );
-      }
-      if (delay > 199) {
-        return done(new Error("Second request took too long: " + delay + "ms"));
-      }
-      done();
-    });
+    let delay = await timedRequest();
+    assert(delay < 100, "First request took too long: " + delay + "ms");
+    delay = await timedRequest();
+    assert(delay >= 100, "Second request was served too fast: " + delay + "ms");
+    assert(delay < 200, "Second request took too long: " + delay + "ms");
   });
 
-  it("should apply a larger delay to the subsequent request", function (done) {
+  it("should apply a larger delay to the subsequent request", async function () {
     createAppWith(
       slowDown({
         delayMs: 100,
       })
     );
-    fastRequest(done);
-    fastRequest(done);
-    fastRequest(done);
-    fastRequest(done, function (/* err, res */) {
-      // should be about 300ms delay on 4th request - because the multiplier starts at 0
-      if (delay < 300) {
-        return done(
-          new Error("Fourth request was served too fast: " + delay + "ms")
-        );
-      }
-      if (delay > 400) {
-        return done(new Error("Fourth request took too long: " + delay + "ms"));
-      }
-      done();
-    });
+    await Promise.all([
+      request(app).get("/"),
+      request(app).get("/"),
+      request(app).get("/"),
+    ]);
+    const delay = await timedRequest();
+    // should be about 300ms delay on 4th request - because the multiplier starts at 0
+    assert(delay >= 300, "Fourth request was served too fast: " + delay + "ms");
+    assert(delay < 400, "Fourth request took too long: " + delay + "ms");
   });
 
-  it("should apply a cap of maxDelayMs on the the delay", function (done) {
+  it("should apply a cap of maxDelayMs on the the delay", async function () {
     createAppWith(
       slowDown({
         delayAfter: 1,
@@ -224,84 +186,54 @@ describe("express-slow-down node module", function () {
         maxDelayMs: 200,
       })
     );
-    fastRequest(done); // 1st - no delay
-    fastRequest(done); // 2nd - 100ms delay
-    fastRequest(done); // 3rd - 200ms delay
-    fastRequest(done, function (/* err, res */) {
-      // should cap the delay so the 4th request delays about 200ms instead of 300ms
-      if (delay < 200) {
-        return done(
-          new Error("Fourth request was served too fast: " + delay + "ms")
-        );
-      }
-      if (delay > 300) {
-        return done(new Error("Fourth request took too long: " + delay + "ms"));
-      }
-      done();
-    });
+    await Promise.all([
+      request(app).get("/"), // 1st - no delay
+      request(app).get("/"), // 2nd - 100ms delay
+      request(app).get("/"), // 3rd - 200ms delay
+    ]);
+
+    const delay = await timedRequest();
+
+    // should cap the delay so the 4th request delays about 200ms instead of 300ms
+    assert(delay >= 150, "Fourth request was served too fast: " + delay + "ms");
+    assert(delay < 250, "Fourth request took too long: " + delay + "ms");
   });
 
-  it("should allow delayAfter requests before delaying responses", function (done) {
+  it("should allow delayAfter requests before delaying responses", async function () {
     createAppWith(
       slowDown({
         delayMs: 100,
         delayAfter: 2,
       })
     );
-    fastRequest(done, function (/* err, res */) {
-      if (delay > 50) {
-        done(new Error("First request took too long: " + delay + "ms"));
-      }
-    });
-    fastRequest(done, function (/* err, res */) {
-      if (delay > 100) {
-        done(new Error("Second request took too long: " + delay + "ms"));
-      }
-    });
-    fastRequest(done, function (/* err, res */) {
-      if (delay < 100) {
-        return done(
-          new Error("Second request was served too fast: " + delay + "ms")
-        );
-      }
-      if (delay > 150) {
-        return done(new Error("Second request took too long: " + delay + "ms"));
-      }
-      done();
-    });
+    let delay = await timedRequest();
+    assert(delay < 50, "First request took too long: " + delay + "ms");
+
+    delay = await timedRequest();
+    assert(delay < 50, "Second request took too long: " + delay + "ms");
+
+    delay = await timedRequest();
+    assert(50 < delay < 150, "Third request outside of range: " + delay + "ms");
   });
 
-  it("should allow delayAfter to be a function", function (done) {
+  it("should allow delayAfter to be a function", async function () {
     createAppWith(
       slowDown({
         delayMs: 100,
         delayAfter: () => 2,
       })
     );
-    fastRequest(done, function (/* err, res */) {
-      if (delay > 50) {
-        done(new Error("First request took too long: " + delay + "ms"));
-      }
-    });
-    fastRequest(done, function (/* err, res */) {
-      if (delay > 100) {
-        done(new Error("Second request took too long: " + delay + "ms"));
-      }
-    });
-    fastRequest(done, function (/* err, res */) {
-      if (delay < 100) {
-        return done(
-          new Error("Second request was served too fast: " + delay + "ms")
-        );
-      }
-      if (delay > 150) {
-        return done(new Error("Second request took too long: " + delay + "ms"));
-      }
-      done();
-    });
+    let delay = await timedRequest();
+    assert(delay < 50, "First request took too long: " + delay + "ms");
+
+    delay = await timedRequest();
+    assert(delay < 50, "Second request took too long: " + delay + "ms");
+
+    delay = await timedRequest();
+    assert(50 < delay < 150, "Third request outside of range: " + delay + "ms");
   });
 
-  it("should (eventually) return to full speed", function (done) {
+  it("should (eventually) return to full speed", async function () {
     createAppWith(
       slowDown({
         delayMs: 100,
@@ -309,22 +241,19 @@ describe("express-slow-down node module", function () {
         windowMs: 50,
       })
     );
-    fastRequest(done);
-    fastRequest(done);
-    slowRequest(done);
-    setTimeout(function () {
-      start = Date.now();
-      fastRequest(done, function (/* err, res */) {
-        if (delay > 50) {
-          done(new Error("Eventual request took too long: " + delay + "ms"));
-        } else {
-          done();
-        }
-      });
-    }, 500);
+    await Promise.all([
+      request(app).get("/"), // 1st - no delay
+      request(app).get("/"), // 2nd - 100ms delay
+      request(app).get("/"), // 3rd - 200ms delay
+    ]);
+
+    await sleep(500);
+
+    const delay = await timedRequest();
+    assert(delay < 50, "Fourth request took too long: " + delay + "ms");
   });
 
-  it("should work repeatedly (issues #2 & #3)", function (done) {
+  it("should work repeatedly (issues #2 & #3)", async function () {
     createAppWith(
       slowDown({
         delayMs: 100,
@@ -333,32 +262,26 @@ describe("express-slow-down node module", function () {
       })
     );
 
-    fastRequest(done);
-    fastRequest(done);
-    slowRequest(done);
-    setTimeout(function () {
-      start = Date.now();
-      fastRequest(done, function (/* err, res */) {
-        if (delay > 50) {
-          done(new Error("Eventual request took too long: " + delay + "ms"));
-        } else {
-          fastRequest(done);
-          slowRequest(done);
-          setTimeout(function () {
-            start = Date.now();
-            fastRequest(done, function (/* err, res */) {
-              if (delay > 50) {
-                done(
-                  new Error("Eventual request took too long: " + delay + "ms")
-                );
-              } else {
-                done();
-              }
-            });
-          }, 60);
-        }
-      });
-    }, 60);
+    await Promise.all([
+      request(app).get("/"), // 1st - no delay
+      request(app).get("/"), // 2nd - 100ms delay
+      request(app).get("/"), // 3rd - 200ms delay
+    ]);
+
+    await sleep(60);
+
+    let delay = await timedRequest();
+    assert(delay < 50, "Fourth request took too long: " + delay + "ms");
+
+    await Promise.all([
+      request(app).get("/"), // 1st - no delay
+      request(app).get("/"), // 2nd - 100ms delay
+    ]);
+
+    await sleep(60);
+
+    delay = await timedRequest();
+    assert(delay < 50, "Eventual request took too long: " + delay + "ms");
   });
 
   it("should allow individual IP's to be reset", function (done) {
