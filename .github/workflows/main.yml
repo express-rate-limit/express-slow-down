@@ -22,29 +22,13 @@ jobs:
         run: |
           npm ci
           npx eslint .
-  test-linux:
-    name: Test Linux
+  test:
+    name: Test
     strategy:
       matrix:
         node-version: [12, 14, 16, 18]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
-      - name: Use Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Run library tests
-        run: |
-          npm ci
-          npx mocha
-  test-windows:
-    name: Test Windows
-    strategy:
-      matrix:
-        node-version: [16, 18]
-    runs-on: windows-latest
+        os:  [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -58,7 +42,7 @@ jobs:
           npx mocha
   publish:
     name: Publish
-    needs: [lint, test-linux, test-windows]
+    needs: [lint, test]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
