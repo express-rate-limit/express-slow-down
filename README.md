@@ -1,9 +1,6 @@
 # Express Slow Down
 
-[![Build Status](https://secure.travis-ci.org/nfriedly/express-slow-down.png?branch=master)](http://travis-ci.org/nfriedly/express-slow-down)
-[![NPM version](http://badge.fury.io/js/express-slow-down.png)](https://npmjs.org/package/express-slow-down "View this project on NPM")
-[![Dependency Status](https://david-dm.org/nfriedly/express-slow-down.png?theme=shields.io)](https://david-dm.org/nfriedly/express-slow-down)
-[![Development Dependency Status](https://david-dm.org/nfriedly/express-slow-down/dev-status.png?theme=shields.io)](https://david-dm.org/nfriedly/express-slow-down#info=devDependencies)
+[![CI](https://github.com/nfriedly/express-slow-down/actions/workflows/main.yml/badge.svg)](https://github.com/nfriedly/express-slow-down/actions/workflows/main.yml)[![NPM version](http://badge.fury.io/js/express-slow-down.png)](https://npmjs.org/package/express-slow-down "View this project on NPM")
 
 Basic rate-limiting middleware for Express that slows down responses rather than blocking them outright. Use to limit repeated requests to public APIs and/or endpoints such as password reset.
 
