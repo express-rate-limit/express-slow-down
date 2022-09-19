@@ -4,10 +4,11 @@ const assert = require("assert");
 const request = require("supertest");
 const eventEmitter = require("events");
 const slowDown = require("../lib/express-slow-down.js");
+const { MockStore, InvalidStore } = require("./helpers/mock-store");
 
 // todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
 
-describe("express-slow-down node module", function () {
+describe("express-slow-down", function () {
   let app, longResponseClosed;
 
   beforeEach(function () {
@@ -33,6 +34,7 @@ describe("express-slow-down node module", function () {
       const timerId = setTimeout(() => res.send("response!"), 100);
       res.on("close", () => {
         longResponseClosed = true;
+
         clearTimeout(timerId);
       });
     });
@@ -43,32 +45,6 @@ describe("express-slow-down node module", function () {
       res.emit("error", new Error());
     });
     return app;
-  }
-
-  function InvalidStore() {}
-
-  function MockStore() {
-    this.incr_was_called = false;
-    this.resetKey_was_called = false;
-    this.decrement_was_called = false;
-    this.counter = 0;
-
-    this.incr = (key, cb) => {
-      this.counter++;
-      this.incr_was_called = true;
-
-      cb(null, this.counter);
-    };
-
-    this.decrement = () => {
-      this.counter--;
-      this.decrement_was_called = true;
-    };
-
-    this.resetKey = () => {
-      this.resetKey_was_called = true;
-      this.counter = 0;
-    };
   }
 
   function fastRequest(errorHandler, successHandler, key) {
@@ -168,14 +144,16 @@ describe("express-slow-down node module", function () {
       })
     );
     await Promise.all([
-      request(app).get("/"),
-      request(app).get("/"),
-      request(app).get("/"),
+      request(app).get("/"), // no delay
+      request(app).get("/"), // 100ms delay
+      request(app).get("/"), // 200ms delay
     ]);
     const delay = await timedRequest();
     // should be about 300ms delay on 4th request - because the multiplier starts at 0
-    assert(delay >= 300, "Fourth request was served too fast: " + delay + "ms");
-    assert(delay < 400, "Fourth request took too long: " + delay + "ms");
+    assert(
+      250 <= delay <= 350,
+      "Fourth request was served too fast or slow: " + delay + "ms"
+    );
   });
 
   it("should apply a cap of maxDelayMs on the the delay", async function () {
@@ -403,7 +381,9 @@ describe("express-slow-down node module", function () {
         }
       });
   });
-  it("should decrement hits with closed response and skipFailedRequests", (done) => {
+  //after upgrading super test, this one always fails, because res.finished is set to true, despite the response never actually being sent
+  // skip.test.js has an equivalent test hat doesn't use supertest and passes
+  it.skip("should decrement hits with closed response and skipFailedRequests", (done) => {
     const store = new MockStore();
     createAppWith(
       slowDown({
@@ -422,12 +402,7 @@ describe("express-slow-down node module", function () {
         setImmediate(checkStoreDecremented);
       }
     };
-    request(app)
-      .get("/long_response")
-      .timeout({
-        response: 10,
-      })
-      .end(checkStoreDecremented);
+    request(app).get("/long_response").timeout(10).end(checkStoreDecremented);
   });
   it("should decrement hits with response emitting error and skipFailedRequests", (done) => {
     const store = new MockStore();

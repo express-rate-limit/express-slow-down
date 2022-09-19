@@ -39,7 +39,7 @@ jobs:
       - name: Run library tests
         run: |
           npm ci
-          npx mocha
+          npx jest
   publish:
     name: Publish
     needs: [lint, test]

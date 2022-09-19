@@ -41,13 +41,13 @@
     "eslint-plugin-prettier": "^3.2.0",
     "express": "^4.17.1",
     "husky": "^4.3.5",
-    "mocha": "^10.0.0",
+    "jest": "^29.0.3",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
-    "supertest": "^6.0.1"
+    "supertest": "^6.2.4"
   },
   "scripts": {
-    "test": "eslint . && mocha",
+    "test": "eslint . && jest",
     "precommit": "pretty-quick --staged"
   }
 }
