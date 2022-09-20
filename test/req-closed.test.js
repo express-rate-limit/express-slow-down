@@ -11,7 +11,7 @@ describe("Connection closed during delay tests", () => {
     jest.restoreAllMocks();
   });
 
-  it("should not excute slow down timer in case of req closed", () => {
+  it("should not execute slow down timer in case of req closed", () => {
     const req = new EventEmitter(),
       res = new EventEmitter();
     // gotta do a bunch of sillyness to convinve it the request isn't finished at the start
