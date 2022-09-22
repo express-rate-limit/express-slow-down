@@ -8,7 +8,7 @@ const { MockStore, InvalidStore } = require("./helpers/mock-store");
 
 // todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
 
-describe("express-slow-down", function () {
+describe("legacy realtime tests", function () {
   let app, longResponseClosed;
 
   beforeEach(function () {
@@ -468,10 +468,8 @@ describe("express-slow-down", function () {
   });
 
   it("should not excute slow down timer in case of req closed", (done) => {
-    const reqMock = new eventEmitter();
-    const resMock = {
-      setHeader: () => {},
-    };
+    const reqMock = {};
+    const resMock = new eventEmitter();
     const currentLimiterMiddleWare = slowDown({
       delayAfter: 0,
       delayMs: 100,
@@ -481,28 +479,7 @@ describe("express-slow-down", function () {
       done(new Error("setTimeout should not excute!"));
     }
     currentLimiterMiddleWare(reqMock, resMock, next);
-    reqMock.emit("close");
-
-    setTimeout(() => {
-      done();
-    }, 200);
-  });
-
-  it("should not excute slow down timer in case of req end", (done) => {
-    const reqMock = new eventEmitter();
-    const resMock = {
-      setHeader: () => {},
-    };
-    const currentLimiterMiddleWare = slowDown({
-      delayAfter: 0,
-      delayMs: 100,
-      windowMs: 1000,
-    });
-    function next() {
-      done(new Error("setTimeout should not excute!"));
-    }
-    currentLimiterMiddleWare(reqMock, resMock, next);
-    reqMock.emit("end");
+    resMock.emit("close");
 
     setTimeout(() => {
       done();
