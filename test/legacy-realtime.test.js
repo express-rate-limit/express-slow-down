@@ -134,7 +134,8 @@ describe("legacy realtime tests", function () {
     assert(delay < 100, "First request took too long: " + delay + "ms");
     delay = await timedRequest();
     assert(delay >= 100, "Second request was served too fast: " + delay + "ms");
-    assert(delay < 200, "Second request took too long: " + delay + "ms");
+    // macos CI server is slow, and can add a 100-200ms of extra delay
+    assert(delay < 400, "Second request took too long: " + delay + "ms");
   });
 
   it("should apply a larger delay to the subsequent request", async function () {
