@@ -77,7 +77,7 @@ A `req.slowDown` property is added to all requests with the following fields:
 ## Configuration
 
 - **windowMs**: milliseconds - how long to keep records of requests in memory. Defaults to `60000` (1 minute).
-- **delayAfter**: max number of connections during `windowMs` before starting to delay responses. Number or function that returns a number. Defaults to `1`. Set to `0` to disable delaying.
+- **delayAfter**: max number of connections during `windowMs` before starting to delay responses. Number or function that returns a number. Defaults to `1`.
 - **delayMs**: milliseconds - how long to delay the response, multiplied by (number of recent hits - `delayAfter`). Defaults to `1000` (1 second). Set to `0` to disable delaying.
 - **maxDelayMs**: milliseconds - maximum value for `delayMs` after many consecutive attempts, that is, after the n-th request, the delay will be always `maxDelayMs`. Important when your application is running behind a load balancer or reverse proxy that has a request timeout. Defaults to `Infinity`.
 
