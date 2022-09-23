@@ -70,6 +70,27 @@ describe("slowdown", () => {
     expectDelay(instance, 99);
   });
 
+  it("should allow delayMs to be a function", () => {
+    const instance = slowDown({
+      delayAfter: 1,
+      delayMs: () => 99,
+    });
+    expectNoDelay(instance);
+    expectDelay(instance, 99);
+  });
+
+  it("should allow maxDelayMs to be a function", () => {
+    const instance = slowDown({
+      delayAfter: 1,
+      delayMs: 100,
+      maxDelayMs: () => 200,
+    });
+    expectNoDelay(instance);
+    expectDelay(instance, 100);
+    expectDelay(instance, 200);
+    expectDelay(instance, 200);
+  });
+
   it("should (eventually) return to full speed", () => {
     const instance = slowDown({
       delayMs: 100,
