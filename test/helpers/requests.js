@@ -13,6 +13,17 @@ function expectNoDelay(
   expect(next).toHaveBeenCalled();
 }
 
+async function expectNoDelayPromise(
+  instance,
+  req = new EventEmitter(),
+  res = new EventEmitter()
+) {
+  const next = jest.fn();
+  await instance(req, res, next);
+  expect(setTimeout).not.toHaveBeenCalled();
+  expect(next).toHaveBeenCalled();
+}
+
 function expectDelay(
   instance,
   expectedDelay,
@@ -37,5 +48,6 @@ function expectDelay(
 
 module.exports = {
   expectNoDelay,
+  expectNoDelayPromise,
   expectDelay,
 };
