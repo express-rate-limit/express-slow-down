@@ -6,12 +6,12 @@ Basic rate-limiting middleware for Express that slows down responses rather than
 
 Plays nice with [Express Rate Limit](https://npmjs.org/package/express-rate-limit)
 
-Note: this module does not share state with other processes/servers by default. This module was extracted from Express Rate Limit 2.x and can work with it's stores:
+Note: this module does not share state with other processes/servers by default. This module was extracted from Express Rate Limit 2.x and can work with any express-rate-limit store that supports the legacy/v1 store interface (v2 support is coming eventually):
 
 ### Stores
 
 - Memory Store _(default, built-in)_ - stores hits in-memory in the Node.js process. Does not share state with other servers or processes.
-- [Redis Store](https://npmjs.com/package/rate-limit-redis)
+- [Redis Store](https://npmjs.com/package/rate-limit-redis) (Use the 2.x release!)
 - [Memcached Store](https://npmjs.org/package/rate-limit-memcached)
 
 Note: when using express-slow-down and express-rate-limit with an external store, you'll need to create two instances of the store and provide different prefixes so that they don't double-count requests.
