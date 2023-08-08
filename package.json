@@ -45,6 +45,10 @@
   },
   "scripts": {
     "test": "eslint . && jest",
-    "precommit": "pretty-quick --staged"
+    "precommit": "pretty-quick --staged",
+    "autofix": "eslint . --fix"
+  },
+  "dependencies": {
+    "express-rate-limit": "^6.9.0"
   }
 }
