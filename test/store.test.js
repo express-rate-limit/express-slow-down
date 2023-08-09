@@ -13,7 +13,7 @@ describe("store", () => {
     jest.restoreAllMocks();
   });
 
-  it("should not allow the use of a store that is not valid", () => {
+  it("should not allow the use of a store that is not valid", async () => {
     expect(() => {
       slowDown({
         store: new InvalidStore(),
@@ -21,15 +21,14 @@ describe("store", () => {
     }).toThrowError(/store/i);
   });
 
-  it("should call incr on the store", () => {
+  it("should call incr on the store", async () => {
     const store = new MockStore();
     expect(store.incr_was_called).toBeFalsy();
 
     const instance = slowDown({
       store,
     });
-
-    expectNoDelay(instance);
+    await expectNoDelay(instance);
     expect(store.incr_was_called).toBeTruthy();
   });
 

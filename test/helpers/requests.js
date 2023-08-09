@@ -2,18 +2,7 @@ const EventEmitter = require("events");
 
 // these helpers expect timers to be mocked and setTimeout to be spied on
 
-function expectNoDelay(
-  instance,
-  req = new EventEmitter(),
-  res = new EventEmitter()
-) {
-  const next = jest.fn();
-  instance(req, res, next);
-  expect(setTimeout).not.toHaveBeenCalled();
-  expect(next).toHaveBeenCalled();
-}
-
-async function expectNoDelayPromise(
+async function expectNoDelay(
   instance,
   req = new EventEmitter(),
   res = new EventEmitter()
@@ -24,7 +13,7 @@ async function expectNoDelayPromise(
   expect(next).toHaveBeenCalled();
 }
 
-function expectDelay(
+async function expectDelay(
   instance,
   expectedDelay,
   req = new EventEmitter(),
@@ -33,7 +22,7 @@ function expectDelay(
   const next = jest.fn();
 
   // set the timeout
-  instance(req, res, next);
+  await instance(req, res, next);
   expect(setTimeout).toHaveBeenCalled();
   expect(next).not.toHaveBeenCalled();
 
@@ -48,6 +37,6 @@ function expectDelay(
 
 module.exports = {
   expectNoDelay,
-  expectNoDelayPromise,
+  expectNoDelayPromise: expectNoDelay,
   expectDelay,
 };

@@ -11,7 +11,7 @@ describe("key", () => {
     jest.restoreAllMocks();
   });
 
-  it("should allow individual IP's to be reset", () => {
+  it("should allow individual IP's to be reset", async () => {
     const instance = slowDown({
       delayMs: 100,
       delayAfter: 1,
@@ -20,23 +20,22 @@ describe("key", () => {
 
     const ip = "1.2.3.4";
 
-    expectNoDelay(instance, { ip });
-    expectDelay(instance, 100, { ip });
+    await expectNoDelay(instance, { ip });
+    await expectDelay(instance, 100, { ip });
 
     instance.resetKey(ip);
     setTimeout.mockClear();
-
-    expectNoDelay(instance, { ip });
+    await expectNoDelay(instance, { ip });
   });
 
-  it("should allow a custom key generator", () => {
+  it("should allow a custom key generator", async () => {
     const keyGenerator = jest.fn();
     const instance = slowDown({
       delayAfter: 1,
       keyGenerator,
     });
 
-    expectNoDelay(instance);
+    await expectNoDelay(instance);
     expect(keyGenerator).toHaveBeenCalled();
   });
 });
