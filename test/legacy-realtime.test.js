@@ -219,7 +219,7 @@ describe("legacy realtime tests", function () {
     createAppWith(
       slowDown({
         delayMs: 100,
-        max: 1,
+        delayAfter: 1,
         windowMs: 50,
       })
     );
@@ -239,7 +239,7 @@ describe("legacy realtime tests", function () {
     createAppWith(
       slowDown({
         delayMs: 100,
-        max: 2,
+        delayAfter: 2,
         windowMs: 50,
       })
     );
@@ -269,7 +269,7 @@ describe("legacy realtime tests", function () {
   it("should allow individual IP's to be reset", function (done) {
     const limiter = slowDown({
       delayMs: 100,
-      max: 1,
+      delayAfter: 1,
       windowMs: 50,
     });
     createAppWith(limiter);
@@ -296,7 +296,7 @@ describe("legacy realtime tests", function () {
   it("should allow custom key generators", function (done) {
     const limiter = slowDown({
       delayMs: 0,
-      max: 2,
+      delayAfter: 2,
       keyGenerator: function (req, res) {
         assert.ok(req);
         assert.ok(res);
@@ -328,7 +328,7 @@ describe("legacy realtime tests", function () {
   it("should allow custom skip function", function (done) {
     const limiter = slowDown({
       delayMs: 0,
-      max: 2,
+      delayAfter: 2,
       skip: function (req, res) {
         assert.ok(req);
         assert.ok(res);
