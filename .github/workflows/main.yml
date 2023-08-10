@@ -5,19 +5,15 @@ on: [push, pull_request]
 jobs:
   lint:
     name: Lint
-    strategy:
-      matrix:
-        node-version: [18]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
       - name: Use Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
       - name: Check for lint/formatting errors
         run: |
           npm ci
@@ -26,8 +22,11 @@ jobs:
     name: Test
     strategy:
       matrix:
-        node-version: [14, 16, 18]
+        node-version: [lts/*, latest]
         os:  [ubuntu-latest, windows-latest, macos-latest]
+      include:
+        - node-version: 14
+          os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout the repository
