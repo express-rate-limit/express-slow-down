@@ -9,7 +9,7 @@ describe("options", () => {
     jest.restoreAllMocks();
   });
 
-  it.skip("should not modify the options object passed", () => {
+  it("should not modify the options object passed", () => {
     const options = {};
     slowDown(options);
     expect(options).toStrictEqual({});
