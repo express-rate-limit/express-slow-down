@@ -468,7 +468,7 @@ describe("legacy realtime tests", function () {
       });
   });
 
-  it("should not excute slow down timer in case of req closed", (done) => {
+  it("should not excute slow down timer in case of req closed during delay", async () => {
     const reqMock = {};
     const resMock = new eventEmitter();
     const currentLimiterMiddleWare = slowDown({
@@ -477,13 +477,13 @@ describe("legacy realtime tests", function () {
       windowMs: 1000,
     });
     function next() {
-      done(new Error("setTimeout should not excute!"));
+      throw new Error("setTimeout should not excute!");
     }
-    currentLimiterMiddleWare(reqMock, resMock, next);
+    await currentLimiterMiddleWare(reqMock, resMock, next);
     resMock.emit("close");
 
-    setTimeout(() => {
-      done();
-    }, 200);
+    await new Promise((resolve) => setTimeout(resolve, 200));
   });
+
+  // todo: it("should not excute slow down timer in case of req closed before delay begins", async () => {
 });
