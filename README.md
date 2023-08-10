@@ -10,9 +10,7 @@ Note: this module does not share state with other processes/servers by default. 
 
 ### Stores
 
-- Memory Store _(default, built-in)_ - stores hits in-memory in the Node.js process. Does not share state with other servers or processes.
-- [Redis Store](https://npmjs.com/package/rate-limit-redis) (Use the 2.x release!)
-- [Memcached Store](https://npmjs.org/package/rate-limit-memcached)
+express-slow-down uses [express-rate-limit's stores](https://github.com/express-rate-limit/express-rate-limit#store)
 
 Note: when using express-slow-down and express-rate-limit with an external store, you'll need to create two instances of the store and provide different prefixes so that they don't double-count requests.
 
@@ -29,7 +27,7 @@ For an API-only server where the rules should be applied to all requests:
 ```js
 const slowDown = require("express-slow-down");
 
-app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
+// app.set("trust proxy", 1); // see https://github.com/express-rate-limit/express-rate-limit/wiki/Troubleshooting-Proxy-Issues
 
 const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -50,7 +48,7 @@ For a "regular" web server (e.g. anything that uses `express.static()`), where t
 ```js
 const slowDown = require("express-slow-down");
 
-app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
+// app.set("trust proxy", 1); // see https://github.com/express-rate-limit/express-rate-limit/wiki/Troubleshooting-Proxy-Issues
 
 const resetPasswordSpeedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -76,7 +74,7 @@ A `req.slowDown` property is added to all requests with the following fields:
 
 ## Configuration
 
-- **windowMs**: milliseconds - how long to keep records of requests in memory. Defaults to `60000` (1 minute).
+- **windowMs**: milliseconds - how long to keep records of requests. (Note that some stores use their own setting to control this.) Defaults to `60000` (1 minute).
 - **delayAfter**: max number of connections during `windowMs` before starting to delay responses. Number or function that returns a number. Defaults to `1`.
 - **delayMs**: milliseconds - how long to delay the response, multiplied by (number of recent hits - `delayAfter`). Defaults to `1000` (1 second). Set to `0` to disable delaying.
 - **maxDelayMs**: milliseconds - maximum value for `delayMs` after many consecutive attempts, that is, after the n-th request, the delay will be always `maxDelayMs`. Important when your application is running behind a load balancer or reverse proxy that has a request timeout. Defaults to `Infinity`.
@@ -104,7 +102,21 @@ A `req.slowDown` property is added to all requests with the following fields:
   // 24th request - 20000ms delay <-- will not increase past 20000ms
   // ...
   ```
+- **delayFn**: Optional custom function to calculate delay. Overrides `delayMs` and `maxDelayMs` settings if set
 
+  Example:
+  ```js
+  app.use(slowDown({
+    delayAfter:  3,
+    delayFn: (hits, req, res) => hits * 100; // 100ms delay per hit.
+  }))
+  // Results will be:
+  // 1st request - no delay
+  // 2nd request - no delay
+  // 3rd request - no delay
+  // 4th request - 400ms delay
+  // 5th request - 500ms delay
+  ```
 - **skipFailedRequests**: when `true` failed requests (response status >= 400) won't be counted. Defaults to `false`.
 - **skipSuccessfulRequests**: when `true` successful requests (response status < 400) won't be counted. Defaults to `false`.
 - **keyGenerator**: Function used to generate keys. By default user IP address (req.ip) is used. Defaults:
@@ -131,9 +143,12 @@ A `req.slowDown` property is added to all requests with the following fields:
   }
   ```
 
-- **store**: The storage to use when persisting rate limit attempts. By default, the [MemoryStore](lib/memory-store.js) is used.
+- **store**: The storage to use when persisting rate limit attempts. See https://github.com/express-rate-limit/express-rate-limit#store
   - Note: when using express-slow-down and express-rate-limit with an external store, you'll need to create two instances of the store and provide different prefixes so that they don't double-count requests.
-- **headers**: Add `X-SlowDown-Limit`, `X-SlowDown-Remaining`, and if the store supports it, `X-SlowDown-Reset` headers to all responses. Modeled after the equivalent headers in express-rate-limit. Default: `false`
+
+### Additonal options from express-rate-Limit
+
+Because express-rate-limit is used internallo, additional options that it supports may be passed in. See https://github.com/express-rate-limit/express-rate-limit#configuration for the complete list. Note that the `max` option is not supported (use `delayAfter` instead), nor are the `legacyHeaders` or `standardHeaders` options.
 
 ## License
 
