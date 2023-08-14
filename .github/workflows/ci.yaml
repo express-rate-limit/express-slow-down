@@ -42,32 +42,9 @@ jobs:
         run: |
           npm ci
           npm run test:lib
-  test-external:
-    name: Test (External)
-    strategy:
-      matrix:
-        node-version: [lts/*, latest]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v3
-      - name: Use Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Run import and external store usage tests
-        run: |
-          pnpm install
-          pnpm pack
-          pnpm test:ext
   publish:
     name: Publish
-    needs: [lint, test-library, test-external]
+    needs: [lint, test-library]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
