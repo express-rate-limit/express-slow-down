@@ -27,7 +27,7 @@ import type {
  * This is not stored in types because it's internal to the API, and should not
  * be interacted with by the user.
  */
-type Configuration = Partial<RateLimitOptions> & {
+type Configuration = {
 	// The options that we override and pass to express-rate-limit.
 	// TODO: Update this whenever express-rate-limit's configuration is updated.
 	max: number | ValueDeterminingMiddleware<number>
@@ -99,7 +99,8 @@ const parseOptions = (passedOptions: Partial<Options>): Configuration => {
 			const retrieve = async <T>(property: keyof Configuration): Promise<T> =>
 				Promise.resolve(
 					typeof config[property] === 'function'
-						? config[property](request, response) // eslint-disable-line @typescript-eslint/no-unsafe-call
+						? // @ts-expect-error Why doesn't typescript understand I checked if it's a function?
+						  config[property](request, response)
 						: config[property],
 				) as Promise<T>
 			const delayAfter = await retrieve<number>('delayAfter')
@@ -187,7 +188,12 @@ const slowDown = (passedOptions?: Partial<Options>): SlowDownRequestHandler => {
 
 			// Ensure the delay code runs only once.
 			if (!delayInfo || delayInfo.delay !== undefined) return next()
-			config.handler(request, response, next, config as RateLimitOptions) // TODO: This cast isn't a good thing, find a way to remove it.
+			config.handler(
+				request,
+				response,
+				next,
+				config as unknown as RateLimitOptions,
+			) // TODO: This cast isn't a good thing, find a way to remove it.
 		},
 	)
 
