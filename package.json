@@ -49,6 +49,6 @@
     "autofix": "eslint . --fix"
   },
   "dependencies": {
-    "express-rate-limit": "^6.9.0"
+    "express-rate-limit": "^7.0.0"
   }
 }
