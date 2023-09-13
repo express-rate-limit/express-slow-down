@@ -102,6 +102,7 @@ describe("legacy realtime tests", function () {
     createAppWith(
       slowDown({
         store,
+        validate: false,
       })
     );
 
@@ -113,13 +114,14 @@ describe("legacy realtime tests", function () {
     const store = new MockStore();
     const limiter = slowDown({
       store,
+      validate: false,
     });
     limiter.resetKey("key");
     assert(store.resetKey_was_called);
   });
 
   it("should allow the first request with minimal delay", async function () {
-    createAppWith(slowDown());
+    createAppWith(slowDown({ validate: false }));
     const delay = await timedRequest();
     assert(delay < 100, "First request took too long: " + delay + "ms");
   });
@@ -128,6 +130,7 @@ describe("legacy realtime tests", function () {
     createAppWith(
       slowDown({
         delayMs: 100,
+        validate: false,
       })
     );
     let delay = await timedRequest();
@@ -142,6 +145,7 @@ describe("legacy realtime tests", function () {
     createAppWith(
       slowDown({
         delayMs: 100,
+        validate: false,
       })
     );
     await Promise.all([
@@ -165,6 +169,7 @@ describe("legacy realtime tests", function () {
         delayAfter: 1,
         delayMs: 100,
         maxDelayMs: 200,
+        validate: false,
       })
     );
     await Promise.all([
@@ -186,6 +191,7 @@ describe("legacy realtime tests", function () {
       slowDown({
         delayMs: 100,
         delayAfter: 2,
+        validate: false,
       })
     );
     let delay = await timedRequest();
@@ -203,6 +209,7 @@ describe("legacy realtime tests", function () {
       slowDown({
         delayMs: 100,
         delayAfter: () => 2,
+        validate: false,
       })
     );
     let delay = await timedRequest();
@@ -221,6 +228,7 @@ describe("legacy realtime tests", function () {
         delayMs: 100,
         delayAfter: 1,
         windowMs: 50,
+        validate: false,
       })
     );
     await Promise.all([
@@ -241,6 +249,7 @@ describe("legacy realtime tests", function () {
         delayMs: 100,
         delayAfter: 2,
         windowMs: 50,
+        validate: false,
       })
     );
 
@@ -271,6 +280,7 @@ describe("legacy realtime tests", function () {
       delayMs: 100,
       delayAfter: 1,
       windowMs: 50,
+      validate: false,
     });
     createAppWith(limiter);
 
@@ -306,6 +316,7 @@ describe("legacy realtime tests", function () {
 
         return key;
       },
+      validate: false,
     });
 
     createAppWith(limiter);
@@ -335,6 +346,7 @@ describe("legacy realtime tests", function () {
 
         return true;
       },
+      validate: false,
     });
 
     createAppWith(limiter);
@@ -346,6 +358,7 @@ describe("legacy realtime tests", function () {
   it("should pass current hits and remaining hits to the next function", function (done) {
     const limiter = slowDown({
       headers: false,
+      validate: false,
     });
     createAppWith(limiter, true, done, done);
     done();
@@ -356,6 +369,7 @@ describe("legacy realtime tests", function () {
       slowDown({
         skipSuccessfulRequests: true,
         store,
+        validate: false,
       })
     );
     fastRequest(done, function () {
@@ -372,6 +386,7 @@ describe("legacy realtime tests", function () {
       slowDown({
         skipFailedRequests: true,
         store,
+        validate: false,
       })
     );
     request(app)
@@ -393,6 +408,7 @@ describe("legacy realtime tests", function () {
       slowDown({
         skipFailedRequests: true,
         store,
+        validate: false,
       })
     );
     const checkStoreDecremented = () => {
@@ -414,6 +430,7 @@ describe("legacy realtime tests", function () {
       slowDown({
         skipFailedRequests: true,
         store,
+        validate: false,
       })
     );
     request(app)
@@ -433,6 +450,7 @@ describe("legacy realtime tests", function () {
       slowDown({
         skipFailedRequests: true,
         store,
+        validate: false,
       })
     );
 
@@ -451,6 +469,7 @@ describe("legacy realtime tests", function () {
       slowDown({
         store,
         skipFailedRequests: true,
+        validate: false,
       })
     );
     request(app)
@@ -475,6 +494,7 @@ describe("legacy realtime tests", function () {
       delayAfter: 0,
       delayMs: 100,
       windowMs: 1000,
+      validate: false,
     });
     function next() {
       throw new Error("setTimeout should not excute!");

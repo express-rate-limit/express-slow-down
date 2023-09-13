@@ -1,5 +1,13 @@
 const EventEmitter = require("events");
 
+function makeReqPassValidation(req) {
+  req.ip = "1.2.3.4";
+  req.app = {
+    get: () => false,
+  };
+  req.headers = [];
+}
+
 // these helpers expect timers to be mocked and setTimeout to be spied on
 
 async function expectNoDelay(
@@ -8,6 +16,7 @@ async function expectNoDelay(
   res = new EventEmitter()
 ) {
   const next = jest.fn();
+  makeReqPassValidation(req);
   await instance(req, res, next);
   expect(setTimeout).not.toHaveBeenCalled();
   expect(next).toHaveBeenCalled();
@@ -20,6 +29,7 @@ async function expectDelay(
   res = new EventEmitter()
 ) {
   const next = jest.fn();
+  makeReqPassValidation(req);
 
   // set the timeout
   await instance(req, res, next);

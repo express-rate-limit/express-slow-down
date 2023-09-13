@@ -24,6 +24,7 @@ describe("Connection closed during delay tests", () => {
       skipFailedRequests: true,
       delayAfter: 0,
       delayMs: 1000,
+      validate: false,
     });
     const next = jest.fn();
 
