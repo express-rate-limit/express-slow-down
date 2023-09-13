@@ -167,7 +167,7 @@ describe("legacy realtime tests", function () {
     createAppWith(
       slowDown({
         delayAfter: 1,
-        delayMs: 100,
+        delayMs: (used) => (used - 1) * 100,
         maxDelayMs: 200,
         validate: false,
       })

@@ -29,7 +29,7 @@ describe("slowdown", () => {
   it("should apply a larger delay to each subsequent request", async () => {
     const instance = slowDown({
       delayAfter: 0,
-      delayMs: 100,
+      delayMs: (used) => used * 100,
     });
     await expectDelay(instance, 100);
     await expectDelay(instance, 200);
@@ -39,7 +39,7 @@ describe("slowdown", () => {
   it("should apply a cap of maxDelayMs on the the delay", async () => {
     const instance = slowDown({
       delayAfter: 0,
-      delayMs: 100,
+      delayMs: (used) => used * 100,
       maxDelayMs: 250,
     });
     await expectDelay(instance, 100);
@@ -82,7 +82,7 @@ describe("slowdown", () => {
   it("should allow maxDelayMs to be a function", async () => {
     const instance = slowDown({
       delayAfter: 1,
-      delayMs: 100,
+      delayMs: (used) => (used - 1) * 100,
       maxDelayMs: () => 200,
     });
     await expectNoDelay(instance);
