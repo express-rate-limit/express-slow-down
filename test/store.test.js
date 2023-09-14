@@ -1,4 +1,4 @@
-const slowDown = require("../lib/express-slow-down");
+const slowDown = require("../source/express-slow-down");
 const { MockStore, InvalidStore } = require("./helpers/mock-store");
 const { MockStorePromiseBased } = require("./helpers/mock-store-promise-based");
 const { expectNoDelay, expectNoDelayPromise } = require("./helpers/requests");

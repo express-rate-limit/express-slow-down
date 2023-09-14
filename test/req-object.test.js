@@ -1,4 +1,4 @@
-const slowDown = require("../lib/express-slow-down");
+const slowDown = require("../source/express-slow-down");
 const { expectNoDelay } = require("./helpers/requests");
 
 describe("req augmentation", () => {

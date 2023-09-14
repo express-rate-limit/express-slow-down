@@ -1,5 +1,5 @@
 const EventEmitter = require("events");
-const slowDown = require("../lib/express-slow-down");
+const slowDown = require("../source/express-slow-down");
 
 describe("Connection closed during delay tests", () => {
   beforeEach(() => {

@@ -1,7 +1,7 @@
 const express = require("express");
 const request = require("supertest");
 const bodyParser = require("body-parser");
-const slowDown = require("../lib/express-slow-down");
+const slowDown = require("../source/express-slow-down");
 const { MockStore } = require("./helpers/mock-store");
 
 describe("realtime tests", () => {

@@ -1,5 +1,5 @@
 const EventEmitter = require("events");
-const slowDown = require("../lib/express-slow-down");
+const slowDown = require("../source/express-slow-down");
 const { expectDelay, expectNoDelay } = require("./helpers/requests");
 const { MockStore } = require("./helpers/mock-store");
 

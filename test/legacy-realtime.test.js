@@ -3,7 +3,7 @@ const express = require("express");
 const assert = require("assert");
 const request = require("supertest");
 const eventEmitter = require("events");
-const slowDown = require("../lib/express-slow-down.js");
+const slowDown = require("../source/express-slow-down");
 const { MockStore, InvalidStore } = require("./helpers/mock-store");
 
 // todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
