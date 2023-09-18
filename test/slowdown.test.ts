@@ -1,3 +1,4 @@
+import {describe, beforeEach, afterEach, jest, it } from '@jest/globals';
 const slowDown = require("../source/express-slow-down");
 const { expectDelay, expectNoDelay } = require("./helpers/requests");
 
@@ -29,7 +30,7 @@ describe("slowdown", () => {
   it("should apply a larger delay to each subsequent request", async () => {
     const instance = slowDown({
       delayAfter: 0,
-      delayMs: (used) => used * 100,
+      delayMs: (used: number) => used * 100,
     });
     await expectDelay(instance, 100);
     await expectDelay(instance, 200);
@@ -39,7 +40,7 @@ describe("slowdown", () => {
   it("should apply a cap of maxDelayMs on the the delay", async () => {
     const instance = slowDown({
       delayAfter: 0,
-      delayMs: (used) => used * 100,
+      delayMs: (used: number) => used * 100,
       maxDelayMs: 250,
     });
     await expectDelay(instance, 100);
@@ -82,7 +83,7 @@ describe("slowdown", () => {
   it("should allow maxDelayMs to be a function", async () => {
     const instance = slowDown({
       delayAfter: 1,
-      delayMs: (used) => (used - 1) * 100,
+      delayMs: (used: number) => (used - 1) * 100,
       maxDelayMs: () => 200,
     });
     await expectNoDelay(instance);
@@ -101,7 +102,7 @@ describe("slowdown", () => {
     await expectDelay(instance, 100);
 
     jest.advanceTimersByTime(200);
-    setTimeout.mockClear();
+    (setTimeout as any).mockClear();
     await expectNoDelay(instance);
   });
 
@@ -114,11 +115,11 @@ describe("slowdown", () => {
     await expectNoDelay(instance);
     await expectNoDelay(instance);
     await expectDelay(instance, 100); // note: window is reset twice in this time
-    setTimeout.mockClear();
+    (setTimeout as any).mockClear();
     await expectNoDelay(instance);
     await expectNoDelay(instance);
     await expectDelay(instance, 100);
-    setTimeout.mockClear();
+    (setTimeout as any).mockClear();
     await expectNoDelay(instance);
   });
 });
