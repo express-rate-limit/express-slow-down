@@ -6,7 +6,7 @@ Basic rate-limiting middleware for Express that slows down responses rather than
 
 Plays nice with [Express Rate Limit](https://npmjs.org/package/express-rate-limit)
 
-Note: this module does not share state with other processes/servers by default. This module was extracted from Express Rate Limit 2.x and can work with any express-rate-limit store that supports the legacy/v1 store interface (v2 support is coming eventually):
+Note: this module does not share state with other processes/servers by default. This module was extracted from Express Rate Limit 2.x and can work with any express-rate-limit store.
 
 ### Stores
 
@@ -31,12 +31,14 @@ const slowDown = require("express-slow-down");
 
 const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  delayAfter: 100, // allow 100 requests per 15 minutes, then...
-  delayMs: 500 // begin adding 500ms of delay per request above 100:
-  // request # 101 is delayed by  500ms
-  // request # 102 is delayed by 1000ms
-  // request # 103 is delayed by 1500ms
+  delayAfter: 5, // allow 5 requests per 15 minutes, then...
+  delayMs: (hits) => hits * 100, // begin adding 100ms of delay per request:
+  // requests 1-5 are not delayed
+  // request # 6 is delayed by 600ms
+  // request # 7 is delayed by 700ms
+  // request # 8 is delayed by 800ms
   // etc.
+  // after 15 minutes, the delay is reset to 0
 });
 
 //  apply to all requests
@@ -52,8 +54,8 @@ const slowDown = require("express-slow-down");
 
 const resetPasswordSpeedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  delayAfter: 5, // allow 5 requests to go at full-speed, then...
-  delayMs: 100 // 6th request has a 100ms delay, 7th has a 200ms delay, 8th gets 300ms, etc.
+  delayAfter: 1 // allow 1 request to go at full-speed, then...
+  delayMs: (hits) => hits * hits * 1000, // 2nd request has a 4 second delay, 3rd is 9 seconds, 4th is 16, etc.
 });
 
 // only apply to POST requests to /reset-password/
@@ -67,17 +69,48 @@ app.post("/reset-password/", resetPasswordSpeedLimiter, function(req, res) {
 A `req.slowDown` property is added to all requests with the following fields:
 
 - `limit`: The options.delayAfter value (defaults to 1)
-- `current`: The number of requests in the current window
+- `used`: The number of requests made in the current window (including this request)
 - `remaining`: The number of requests remaining before rate-limiting begins
 - `resetTime`: When the window will reset and current will return to 0, and remaining will return to limit (in milliseconds since epoch - compare to Date.now()). Note: this field depends on store support. It will be undefined if the store does not provide the value.
 - `delay`: Amount of delay imposed on current request (milliseconds)
 
 ## Configuration
 
-- **windowMs**: milliseconds - how long to keep records of requests. (Note that some stores use their own setting to control this.) Defaults to `60000` (1 minute).
-- **delayAfter**: max number of connections during `windowMs` before starting to delay responses. Number or function that returns a number. Defaults to `1`.
-- **delayMs**: milliseconds - how long to delay the response, multiplied by (number of recent hits - `delayAfter`). Defaults to `1000` (1 second). Set to `0` to disable delaying.
-- **maxDelayMs**: milliseconds - maximum value for `delayMs` after many consecutive attempts, that is, after the n-th request, the delay will be always `maxDelayMs`. Important when your application is running behind a load balancer or reverse proxy that has a request timeout. Defaults to `Infinity`.
+- **windowMs**: `number` - milliseconds - how long to keep records of requests. (Note that some stores use their own setting to control this.) Defaults to `60000` (1 minute).
+- **delayAfter**: `number` | `(req, res) =>  number| Promise<number>` - max number of connections during `windowMs` before starting to delay responses. Number or function that returns a number. Defaults to `1`.
+- **delayMs**: `number` | `(used, req, res) =>  number| Promise<number>` - milliseconds - how long to delay the response. Defaults to `(used) => (used - delayAfter) * 1000`.
+
+  Function example:
+  ```js
+  app.use(slowDown({
+    delayAfter:  3,
+    delayMs: (used, req, res) => used * 100; // 100ms delay per hit.
+  }))
+  // Results will be:
+  // 1st request - no delay
+  // 2nd request - no delay
+  // 3rd request - no delay
+  // 4th request - 400ms delay
+  // 5th request - 500ms delay
+  ```
+
+  Fixed number example:
+
+  Example:
+  ```js
+  app.use(slowDown({
+    delayAfter:  3,
+    delayMs: 1000,
+  }))
+  // Results will be:
+  // 1st request - no delay
+  // 2nd request - no delay
+  // 3rd request - no delay
+  // 4th request - 1000ms delay
+  // 5th request - 1000ms delay
+  ```
+
+- **maxDelayMs**: `number` | `(req, res) =>  number| Promise<number>` - milliseconds - maximum value for `delayMs` after many consecutive attempts, that is, after the n-th request, the delay will be always `maxDelayMs`. Important when your application is running behind a load balancer or reverse proxy that has a request timeout. Defaults to `Infinity`.
 
   ```javascript
   // Example
@@ -85,7 +118,7 @@ A `req.slowDown` property is added to all requests with the following fields:
   // Given:
   {
       delayAfter: 1,
-      delayMs: 1000,
+      delayMs: hits => hits * 1000,
       maxDelayMs: 20000,
   }
 
@@ -102,24 +135,9 @@ A `req.slowDown` property is added to all requests with the following fields:
   // 24th request - 20000ms delay <-- will not increase past 20000ms
   // ...
   ```
-- **delayFn**: Optional custom function to calculate delay. Overrides `delayMs` and `maxDelayMs` settings if set
-
-  Example:
-  ```js
-  app.use(slowDown({
-    delayAfter:  3,
-    delayFn: (hits, req, res) => hits * 100; // 100ms delay per hit.
-  }))
-  // Results will be:
-  // 1st request - no delay
-  // 2nd request - no delay
-  // 3rd request - no delay
-  // 4th request - 400ms delay
-  // 5th request - 500ms delay
-  ```
 - **skipFailedRequests**: when `true` failed requests (response status >= 400) won't be counted. Defaults to `false`.
 - **skipSuccessfulRequests**: when `true` successful requests (response status < 400) won't be counted. Defaults to `false`.
-- **keyGenerator**: Function used to generate keys. By default user IP address (req.ip) is used. Defaults:
+- **keyGenerator**: Function used to generate keys. By default user IP address (req.ip) is used, similar to:
 
   ```js
   function (req /*, res*/) {
@@ -135,20 +153,12 @@ A `req.slowDown` property is added to all requests with the following fields:
   }
   ```
 
-- **onLimitReached**: Function to listen the first time the limit is reached within windowMs. Defaults:
-
-  ```js
-  function (req, res, options) {
-  /* empty */
-  }
-  ```
-
 - **store**: The storage to use when persisting rate limit attempts. See https://github.com/express-rate-limit/express-rate-limit#store
   - Note: when using express-slow-down and express-rate-limit with an external store, you'll need to create two instances of the store and provide different prefixes so that they don't double-count requests.
 
 ### Additonal options from express-rate-Limit
 
-Because express-rate-limit is used internallo, additional options that it supports may be passed in. See https://github.com/express-rate-limit/express-rate-limit#configuration for the complete list. Note that the `max` option is not supported (use `delayAfter` instead), nor are the `legacyHeaders` or `standardHeaders` options.
+Because express-rate-limit is used internallo, additional options that it supports may be passed in. See https://github.com/express-rate-limit/express-rate-limit#configuration for the complete list. Note that the `limit` (`max`) option is not supported (use `delayAfter` instead), nor is `handler` or the various headers options.
 
 ## License
 
