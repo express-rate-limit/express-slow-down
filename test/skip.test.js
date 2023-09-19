@@ -1,7 +1,7 @@
-const EventEmitter = require('node:events')
-const slowDown = require('../source/express-slow-down')
-const { expectDelay, expectNoDelay } = require('./helpers/requests')
-const { MockStore } = require('./helpers/mock-store')
+import EventEmitter from 'node:events'
+import slowDown from '../source/express-slow-down'
+import { expectDelay, expectNoDelay } from './helpers/requests.js'
+import { MockStore } from './helpers/mock-store.js'
 
 describe('request skipping', () => {
 	beforeEach(() => {

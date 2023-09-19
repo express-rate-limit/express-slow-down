@@ -1,8 +1,8 @@
-const express = require('express')
-const request = require('supertest')
-const bodyParser = require('body-parser')
-const slowDown = require('../source/express-slow-down')
-const { MockStore } = require('./helpers/mock-store')
+import express from 'express'
+import request from 'supertest'
+import bodyParser from 'body-parser'
+import slowDown from '../source/express-slow-down'
+import { MockStore } from './helpers/mock-store.js'
 
 describe('realtime tests', () => {
 	it('should handle a req being processed before express-slow-down (realtime) (#31 & #32)', (done) => {

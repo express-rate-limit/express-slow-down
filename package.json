@@ -9,10 +9,6 @@
   },
   "repository": "nfriedly/express-slow-down",
   "license": "MIT",
-  "main": "dist/express-slow-down.js",
-  "files": [
-    "dist/"
-  ],
   "keywords": [
     "express-rate-limit",
     "express",
@@ -31,6 +27,32 @@
     "brute-force",
     "attack"
   ],
+  "type": "module",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/express-slow-down.d.mts",
+				"default": "./dist/express-slow-down.mjs"
+			},
+			"require": {
+				"types": "./dist/express-slow-down.d.cts",
+				"default": "./dist/express-slow-down.cjs"
+			}
+		}
+	},
+  "main": "dist/express-slow-down.cjs",
+	"module": "./dist/express-slow-down.mjs",
+	"types": "./dist/express-slow-down.d.ts",
+	"files": [
+		"dist/",
+		"tsconfig.json",
+		"readme.md",
+		"license.md",
+		"changelog.md"
+	],
+	"engines": {
+		"node": ">= 16"
+	},
   "scripts": {
     "clean": "del-cli dist/ coverage/ *.log *.tmp *.bak *.tgz",
     "build:cjs": "esbuild --platform=node --bundle --target=es2022 --format=cjs --outfile=dist/express-slow-down.cjs --footer:js=\"module.exports = slowDown; module.exports.default = slowDown; module.exports.slowDown = slowDown; \" source/express-slow-down.ts",

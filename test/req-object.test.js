@@ -1,5 +1,5 @@
-const slowDown = require('../source/express-slow-down')
-const { expectNoDelay } = require('./helpers/requests')
+import slowDown from '../source/express-slow-down'
+import { expectNoDelay } from './helpers/requests.js'
 
 describe('req augmentation', () => {
 	beforeEach(() => {

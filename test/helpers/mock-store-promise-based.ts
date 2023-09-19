@@ -1,4 +1,6 @@
-function MockStorePromiseBased() {
+import { Store } from 'express-rate-limit'
+
+export class MockStorePromiseBased implements Store {
 	this.store = {}
 	this.incr_was_called = false
 	this.resetKey_was_called = false
@@ -23,8 +25,4 @@ function MockStorePromiseBased() {
 		this.resetKey_was_called = true
 		this.store[key] = 0
 	}
-}
-
-module.exports = {
-	MockStorePromiseBased,
 }

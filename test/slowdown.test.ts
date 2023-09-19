@@ -1,7 +1,6 @@
 import { describe, beforeEach, afterEach, jest, it } from '@jest/globals'
-
-const slowDown = require('../source/express-slow-down')
-const { expectDelay, expectNoDelay } = require('./helpers/requests')
+import slowDown from '../source/express-slow-down'
+import { expectDelay, expectNoDelay } from './helpers/requests.js'
 
 describe('slowdown', () => {
 	beforeEach(() => {

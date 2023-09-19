@@ -1,6 +1,8 @@
-function InvalidStore() {}
+import { LegacyStore } from 'express-rate-limit'
 
-function MockStore() {
+export function InvalidStore() {}
+
+export class MockStore implements LegacyStore {
 	this.incr_was_called = false
 	this.resetKey_was_called = false
 	this.decrement_was_called = false
@@ -23,9 +25,4 @@ function MockStore() {
 		this.resetKey_was_called = true
 		this.counter = 0
 	}
-}
-
-module.exports = {
-	InvalidStore,
-	MockStore,
 }

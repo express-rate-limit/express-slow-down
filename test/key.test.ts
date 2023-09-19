@@ -6,9 +6,8 @@ import {
 	jest,
 	it,
 } from '@jest/globals'
-
-const slowDown = require('../source/express-slow-down')
-const { expectDelay, expectNoDelay } = require('./helpers/requests')
+import slowDown from '../source/express-slow-down'
+import { expectDelay, expectNoDelay } from './helpers/requests'
 
 describe('key', () => {
 	beforeEach(() => {
@@ -38,7 +37,7 @@ describe('key', () => {
 	})
 
 	it('should allow a custom key generator', async () => {
-		const keyGenerator = jest.fn()
+		const keyGenerator = jest.fn() as any
 		const instance = slowDown({
 			delayAfter: 1,
 			keyGenerator,

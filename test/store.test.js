@@ -1,7 +1,7 @@
-const slowDown = require('../source/express-slow-down')
-const { MockStore, InvalidStore } = require('./helpers/mock-store')
-const { MockStorePromiseBased } = require('./helpers/mock-store-promise-based')
-const { expectNoDelay, expectNoDelayPromise } = require('./helpers/requests')
+import slowDown from '../source/express-slow-down'
+import { MockStore, InvalidStore } from './helpers/mock-store.js'
+import { MockStorePromiseBased } from './helpers/mock-store-promise-based.js'
+import { expectNoDelay, expectNoDelayPromise } from './helpers/requests.js'
 
 describe('store', () => {
 	beforeEach(() => {

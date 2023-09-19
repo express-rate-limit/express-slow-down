@@ -1,10 +1,9 @@
 'use strict'
-import type { Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
+import { rateLimit } from 'express-rate-limit'
 import { type AugmentedRequest, type Options } from './types'
 
-const { rateLimit } = require('express-rate-limit')
-
-function slowDown(options_: Partial<Options> = {}) {
+export function slowDown(options_: Partial<Options> = {}) {
 	if (options_.headers || options_.legacyHeaders || options_.standardHeaders) {
 		throw new Error('express-slow-down headers option was removed in v2.0.0')
 	}
@@ -43,11 +42,12 @@ function slowDown(options_: Partial<Options> = {}) {
 		legacyHeaders: false,
 		standardHeaders: false,
 		async handler(
-			request: AugmentedRequest,
+			_request: Request,
 			res: Response,
 			next: NextFunction,
 		) {
-			const used = request[options.requestPropertyName].used
+      const request = _request as AugmentedRequest
+			const { used } = request[options.requestPropertyName]
 			const unboundedDelay =
 				typeof options.delayMs === 'function'
 					? await options.delayMs(used, request, res)
@@ -97,5 +97,4 @@ function slowDown(options_: Partial<Options> = {}) {
 	return wrappedSlowDown
 }
 
-module.exports = slowDown
-module.exports.slowDown = slowDown
+export default slowDown

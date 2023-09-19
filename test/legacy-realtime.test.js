@@ -1,10 +1,9 @@
-'use strict'
-const assert = require('node:assert')
-const eventEmitter = require('node:events')
-const express = require('express')
-const request = require('supertest')
-const slowDown = require('../source/express-slow-down')
-const { MockStore, InvalidStore } = require('./helpers/mock-store')
+import assert from 'node:assert'
+import eventEmitter from 'node:events'
+import express from 'express'
+import request from 'supertest'
+import slowDown from '../source/express-slow-down'
+import { MockStore, InvalidStore } from './helpers/mock-store.js'
 
 // Todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
 

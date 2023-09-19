@@ -1,5 +1,5 @@
-const EventEmitter = require('node:events')
-const slowDown = require('../source/express-slow-down')
+import EventEmitter from 'node:events'
+import slowDown from '../source/express-slow-down'
 
 describe('Connection closed during delay tests', () => {
 	beforeEach(() => {

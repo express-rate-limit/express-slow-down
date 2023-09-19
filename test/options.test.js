@@ -1,4 +1,4 @@
-const slowDown = require('../source/express-slow-down')
+import slowDown from '../source/express-slow-down'
 
 describe('options', () => {
 	beforeEach(() => {
