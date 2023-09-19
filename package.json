@@ -2,16 +2,16 @@
   "name": "express-slow-down",
   "version": "1.6.0",
   "description": "Basic IP rate-limiting middleware for Express that slows down responses rather than blocking the user.",
-  "homepage": "https://github.com/nfriedly/express-slow-down",
+  "homepage": "https://github.com/express-rate-limit/express-slow-down",
   "author": {
     "name": "Nathan Friedly",
     "url": "http://nfriedly.com/"
   },
   "repository": "nfriedly/express-slow-down",
   "license": "MIT",
-  "main": "lib/express-slow-down.js",
+  "main": "dist/express-slow-down.js",
   "files": [
-    "lib/"
+    "dist/"
   ],
   "keywords": [
     "express-rate-limit",
@@ -31,29 +31,74 @@
     "brute-force",
     "attack"
   ],
+  "scripts": {
+    "clean": "del-cli dist/ coverage/ *.log *.tmp *.bak *.tgz",
+    "build:cjs": "esbuild --platform=node --bundle --target=es2022 --format=cjs --outfile=dist/express-slow-down.cjs --footer:js=\"module.exports = slowDown; module.exports.default = slowDown; module.exports.slowDown = slowDown; \" source/express-slow-down.ts",
+    "build:esm": "esbuild --platform=node --bundle --target=es2022 --format=esm --outfile=dist/express-slow-down.mjs source/express-slow-down.ts",
+    "build:types": "dts-bundle-generator --out-file=dist/express-slow-down.d.ts source/express-slow-down.ts && cp dist/express-slow-down.d.ts dist/express-slow-down.d.cts && cp dist/express-slow-down.d.ts dist/express-slow-down.d.mts",
+    "compile": "run-s clean build:*",
+    "lint:code": "xo",
+    "lint:rest": "prettier --check .",
+    "lint": "run-s lint:*",
+    "format:code": "xo --fix",
+    "format:rest": "prettier --write .",
+    "format": "run-s format:*",
+    "test": "run-s lint:code jest",
+    "pre-commit": "lint-staged",
+    "prepare": "run-s compile && husky install config/husky"
+  },
+  "xo": {
+    "prettier": true,
+    "rules": {
+      "@typescript-eslint/no-empty-function": 0,
+      "@typescript-eslint/no-dynamic-delete": 0,
+      "@typescript-eslint/no-confusing-void-expression": 0,
+      "@typescript-eslint/consistent-indexed-object-style": [
+        "error",
+        "index-signature"
+      ],
+      "n/no-unsupported-features/es-syntax": 0
+    },
+    "overrides": [
+      {
+        "files": "test/*.ts",
+        "rules": {
+          "@typescript-eslint/no-unsafe-argument": 0,
+          "@typescript-eslint/no-unsafe-assignment": 0
+        }
+      }
+    ]
+  },
+  "prettier": "@express-rate-limit/prettier",
+  "lint-staged": {
+    "{source,test}/**/*.ts": "xo --fix",
+    "**/*.{json,yaml,md}": "prettier --write "
+  },
+  "dependencies": {
+    "express-rate-limit": "^7.0.0"
+  },
   "devDependencies": {
+    "@express-rate-limit/prettier": "^1.1.0",
     "@express-rate-limit/tsconfig": "^1.0.0",
     "@jest/globals": "^29.7.0",
     "@types/express": "^4.17.17",
     "body-parser": "^1.20.0",
+    "del-cli": "^5.1.0",
+    "dts-bundle-generator": "^8.0.1",
+    "esbuild": "^0.19.3",
     "eslint": "^7.15.0",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-prettier": "^3.2.0",
     "express": "^4.17.1",
     "husky": "^8.0.3",
     "jest": "^29.6.2",
+    "lint-staged": "^14.0.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
     "supertest": "^6.2.4",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.2.2"
-  },
-  "scripts": {
-    "test": "eslint . && jest",
-    "precommit": "pretty-quick --staged",
-    "autofix": "eslint . --fix"
-  },
-  "dependencies": {
-    "express-rate-limit": "^7.0.0"
+    "typescript": "^5.2.2",
+    "xo": "^0.56.0"
   }
 }
