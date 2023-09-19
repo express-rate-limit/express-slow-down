@@ -28,31 +28,31 @@
     "attack"
   ],
   "type": "module",
-	"exports": {
-		".": {
-			"import": {
-				"types": "./dist/express-slow-down.d.mts",
-				"default": "./dist/express-slow-down.mjs"
-			},
-			"require": {
-				"types": "./dist/express-slow-down.d.cts",
-				"default": "./dist/express-slow-down.cjs"
-			}
-		}
-	},
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/express-slow-down.d.mts",
+        "default": "./dist/express-slow-down.mjs"
+      },
+      "require": {
+        "types": "./dist/express-slow-down.d.cts",
+        "default": "./dist/express-slow-down.cjs"
+      }
+    }
+  },
   "main": "dist/express-slow-down.cjs",
-	"module": "./dist/express-slow-down.mjs",
-	"types": "./dist/express-slow-down.d.ts",
-	"files": [
-		"dist/",
-		"tsconfig.json",
-		"readme.md",
-		"license.md",
-		"changelog.md"
-	],
-	"engines": {
-		"node": ">= 16"
-	},
+  "module": "./dist/express-slow-down.mjs",
+  "types": "./dist/express-slow-down.d.ts",
+  "files": [
+    "dist/",
+    "tsconfig.json",
+    "readme.md",
+    "license.md",
+    "changelog.md"
+  ],
+  "engines": {
+    "node": ">= 16"
+  },
   "scripts": {
     "clean": "del-cli dist/ coverage/ *.log *.tmp *.bak *.tgz",
     "build:cjs": "esbuild --platform=node --bundle --target=es2022 --format=cjs --outfile=dist/express-slow-down.cjs --footer:js=\"module.exports = slowDown; module.exports.default = slowDown; module.exports.slowDown = slowDown; \" source/express-slow-down.ts",
@@ -104,11 +104,11 @@
     "@express-rate-limit/tsconfig": "^1.0.0",
     "@jest/globals": "^29.7.0",
     "@types/express": "^4.17.17",
+    "@types/supertest": "^2.0.12",
     "body-parser": "^1.20.0",
     "del-cli": "^5.1.0",
     "dts-bundle-generator": "^8.0.1",
     "esbuild": "^0.19.3",
-    "eslint": "^7.15.0",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-prettier": "^3.2.0",
     "express": "^4.17.1",

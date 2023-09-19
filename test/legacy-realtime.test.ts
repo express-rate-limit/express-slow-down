@@ -3,7 +3,15 @@ import eventEmitter from 'node:events'
 import express from 'express'
 import request from 'supertest'
 import slowDown from '../source/express-slow-down'
-import { MockStore, InvalidStore } from './helpers/mock-store.js'
+import { MockStore, InvalidStore } from './helpers/mock-store'
+import {
+	describe,
+	expect,
+	beforeEach,
+	afterEach,
+	jest,
+	it,
+} from '@jest/globals'
 
 // Todo: look into using http://sinonjs.org/docs/#clock instead of actually letting the tests wait on setTimeouts
 
@@ -47,7 +55,7 @@ describe('legacy realtime tests', function () {
 		return app
 	}
 
-	function fastRequest(errorHandler, successHandler, key) {
+	function fastRequest(errorHandler: any, successHandler: any, key?: any) {
 		let request_ = request(app).get('/')
 		// Add optional key parameter
 		if (key) {
@@ -480,7 +488,7 @@ describe('legacy realtime tests', function () {
 		request(app)
 			.get('/bad_response_status')
 			.expect(403)
-			.end(function (error /* , res */) {
+			.end(function (error: any /* , res */) {
 				if (error) {
 					return done(error)
 				}
@@ -506,7 +514,7 @@ describe('legacy realtime tests', function () {
 			throw new Error('setTimeout should not excute!')
 		}
 
-		await currentLimiterMiddleWare(requestMock, resMock, next)
+		await currentLimiterMiddleWare(requestMock as any, resMock as any, next)
 		resMock.emit('close')
 
 		await new Promise((resolve) => setTimeout(resolve, 200))
