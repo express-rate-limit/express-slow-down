@@ -1,42 +1,50 @@
-import {describe, expect, beforeEach, afterEach, jest, it } from '@jest/globals';
-const slowDown = require("../source/express-slow-down");
-const { expectDelay, expectNoDelay } = require("./helpers/requests");
+import {
+	describe,
+	expect,
+	beforeEach,
+	afterEach,
+	jest,
+	it,
+} from '@jest/globals'
 
-describe("key", () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-    jest.spyOn(global, "setTimeout");
-  });
-  afterEach(() => {
-    jest.useRealTimers();
-    jest.restoreAllMocks();
-  });
+const slowDown = require('../source/express-slow-down')
+const { expectDelay, expectNoDelay } = require('./helpers/requests')
 
-  it("should allow individual IP's to be reset", async () => {
-    const instance = slowDown({
-      delayMs: 100,
-      delayAfter: 1,
-      windowMs: 1000,
-    });
+describe('key', () => {
+	beforeEach(() => {
+		jest.useFakeTimers()
+		jest.spyOn(global, 'setTimeout')
+	})
+	afterEach(() => {
+		jest.useRealTimers()
+		jest.restoreAllMocks()
+	})
 
-    const ip = "1.2.3.4";
+	it("should allow individual IP's to be reset", async () => {
+		const instance = slowDown({
+			delayMs: 100,
+			delayAfter: 1,
+			windowMs: 1000,
+		})
 
-    await expectNoDelay(instance, { ip });
-    await expectDelay(instance, 100, { ip });
+		const ip = '1.2.3.4'
 
-    instance.resetKey(ip);
-    (setTimeout as any).mockClear();
-    await expectNoDelay(instance, { ip });
-  });
+		await expectNoDelay(instance, { ip })
+		await expectDelay(instance, 100, { ip })
 
-  it("should allow a custom key generator", async () => {
-    const keyGenerator = jest.fn();
-    const instance = slowDown({
-      delayAfter: 1,
-      keyGenerator,
-    });
+		instance.resetKey(ip)
+		;(setTimeout as any).mockClear()
+		await expectNoDelay(instance, { ip })
+	})
 
-    await expectNoDelay(instance);
-    expect(keyGenerator).toHaveBeenCalled();
-  });
-});
+	it('should allow a custom key generator', async () => {
+		const keyGenerator = jest.fn()
+		const instance = slowDown({
+			delayAfter: 1,
+			keyGenerator,
+		})
+
+		await expectNoDelay(instance)
+		expect(keyGenerator).toHaveBeenCalled()
+	})
+})

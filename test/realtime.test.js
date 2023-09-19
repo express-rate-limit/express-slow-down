@@ -1,36 +1,36 @@
-const express = require("express");
-const request = require("supertest");
-const bodyParser = require("body-parser");
-const slowDown = require("../source/express-slow-down");
-const { MockStore } = require("./helpers/mock-store");
+const express = require('express')
+const request = require('supertest')
+const bodyParser = require('body-parser')
+const slowDown = require('../source/express-slow-down')
+const { MockStore } = require('./helpers/mock-store')
 
-describe("realtime tests", () => {
-  it("should handle a req being processed before express-slow-down (realtime) (#31 & #32)", (done) => {
-    const app = express();
+describe('realtime tests', () => {
+	it('should handle a req being processed before express-slow-down (realtime) (#31 & #32)', (done) => {
+		const app = express()
 
-    // Note: in real-world usabe, bodyParser come *after* express-slow-down
-    app.use(bodyParser.json({ limit: "50mb" }));
+		// Note: in real-world usabe, bodyParser come *after* express-slow-down
+		app.use(bodyParser.json({ limit: '50mb' }))
 
-    app.use(
-      slowDown({
-        delayAfter: 0,
-        delayMs: 100,
-        store: new MockStore(),
-      })
-    );
-    app.post("/upload", (req, res) => {
-      if (req.body.test) {
-        res.send("success!");
-      } else {
-        res.status(400).send("missing test key in body");
-      }
-    });
+		app.use(
+			slowDown({
+				delayAfter: 0,
+				delayMs: 100,
+				store: new MockStore(),
+			}),
+		)
+		app.post('/upload', (request_, res) => {
+			if (request_.body.test) {
+				res.send('success!')
+			} else {
+				res.status(400).send('missing test key in body')
+			}
+		})
 
-    request(app)
-      .post("/upload")
-      .send({ test: true })
-      .expect(200)
-      .expect(/success!/)
-      .end(done);
-  });
-});
+		request(app)
+			.post('/upload')
+			.send({ test: true })
+			.expect(200)
+			.expect(/success!/)
+			.end(done)
+	})
+})
