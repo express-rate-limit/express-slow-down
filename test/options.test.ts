@@ -1,3 +1,11 @@
+import {
+	describe,
+	expect,
+	beforeEach,
+	afterEach,
+	jest,
+	it,
+} from '@jest/globals'
 import slowDown from '../source/express-slow-down'
 
 describe('options', () => {
