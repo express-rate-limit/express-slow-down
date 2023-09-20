@@ -38,25 +38,30 @@ export function slowDown(options_: Partial<Options> = {}) {
 		// Additional options are passed directly to express-rate-limit
 		...options_,
 		// These settings cannot be overriden
-		limit: options_.delayAfter ?? 1, // `delayAfter` for express-slow-down is `limit` for express-rate-limit.
+		limit: 0, // We want the handler to always run
 		legacyHeaders: false,
 		standardHeaders: false,
-		async handler(
-			_request: Request,
-			res: Response,
-			next: NextFunction,
-		) {
-      const request = _request as AugmentedRequest
-			const { used } = request[options.requestPropertyName]
-			const unboundedDelay =
-				typeof options.delayMs === 'function'
-					? await options.delayMs(used, request, res)
-					: options.delayMs
-			const maxDelayMs =
-				typeof options.maxDelayMs === 'function'
-					? await options.maxDelayMs(request, res)
-					: options.maxDelayMs
-			const delay = Math.max(0, Math.min(unboundedDelay, maxDelayMs))
+		async handler(_request: Request, res: Response, next: NextFunction) {
+			const delayAfter =
+				typeof options.delayAfter === 'function'
+					? await options.delayAfter(_request, res)
+					: options.delayAfter
+			const request = _request as AugmentedRequest
+			const info = request[options.requestPropertyName]
+			info.limit = delayAfter
+			const { used } = info
+			let delay = 0
+			if (used > delayAfter) {
+				const unboundedDelay =
+					typeof options.delayMs === 'function'
+						? await options.delayMs(used, request, res)
+						: options.delayMs
+				const maxDelayMs =
+					typeof options.maxDelayMs === 'function'
+						? await options.maxDelayMs(request, res)
+						: options.maxDelayMs
+				delay = Math.max(0, Math.min(unboundedDelay, maxDelayMs))
+			}
 
 			request[options.requestPropertyName].delay = delay
 
@@ -74,27 +79,7 @@ export function slowDown(options_: Partial<Options> = {}) {
 		},
 	}
 
-	const slowDown = rateLimit(options)
-
-	// Ensure delay is set on the SlowDownInfo for requests before delayAfter
-	const wrappedSlowDown = async (
-		request: AugmentedRequest,
-		res: Response,
-		next: NextFunction,
-	) => {
-		await slowDown(request, res, () => {
-			const info = request[options.requestPropertyName]
-			if (info && !info.delay) {
-				info.delay = 0
-			}
-
-			next()
-		})
-	}
-
-	wrappedSlowDown.resetKey = slowDown.resetKey
-
-	return wrappedSlowDown
+	return rateLimit(options)
 }
 
 export default slowDown
