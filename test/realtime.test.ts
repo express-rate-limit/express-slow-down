@@ -1,8 +1,9 @@
+import { describe, it } from '@jest/globals'
 import express from 'express'
 import request from 'supertest'
 import bodyParser from 'body-parser'
 import slowDown from '../source/express-slow-down'
-import { MockStore } from './helpers/mock-store.js'
+import { MockStore } from './helpers/mock-store'
 
 describe('realtime tests', () => {
 	it('should handle a req being processed before express-slow-down (realtime) (#31 & #32)', (done) => {
