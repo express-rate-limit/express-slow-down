@@ -52,6 +52,7 @@ export function slowDown(
 			const info = request[options.requestPropertyName]
 			info.limit = delayAfter
 			const { used } = info
+      info.remaining = Math.max(0, delayAfter - used)
 			let delay = 0
 			if (used > delayAfter) {
 				const unboundedDelay =
