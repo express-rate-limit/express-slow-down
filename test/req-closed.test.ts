@@ -1,4 +1,12 @@
 import EventEmitter from 'node:events'
+import {
+	describe,
+	expect,
+	beforeEach,
+	afterEach,
+	jest,
+	it,
+} from '@jest/globals'
 import slowDown from '../source/express-slow-down'
 
 describe('Connection closed during delay tests', () => {
@@ -12,8 +20,8 @@ describe('Connection closed during delay tests', () => {
 	})
 
 	it('should not excute slow down timer in case of req closed', async () => {
-		const request = new EventEmitter()
-		const res = new EventEmitter()
+		const request = new EventEmitter() as any
+		const res = new EventEmitter() as any
 		// Gotta do a bunch of sillyness to convinve it the request isn't finished at the start
 		request.socket = new EventEmitter()
 		request.socket.readable = true
