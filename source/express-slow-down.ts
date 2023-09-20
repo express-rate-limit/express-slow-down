@@ -24,11 +24,8 @@ export function slowDown(
 	const options = {
 		// Default settings that may be overridden
 		delayAfter: 1, // How many requests to allow through before starting to delay responses
-		async delayMs(used: number, request: AugmentedRequest, res: Response) {
-			const delayAfter =
-				typeof this.delayAfter === 'function'
-					? await this.delayAfter(request, res)
-					: this.delayAfter
+		delayMs(used: number, request: AugmentedRequest, res: Response) {
+			const delayAfter = request[this.requestPropertyName].limit
 			return (used - delayAfter) * 1000
 		}, // Number or function (may be async)
 		maxDelayMs: Number.POSITIVE_INFINITY, // Milliseconds - maximum delay to be applied to the response, regardless the request count. Infinity means that the delay will grow continuously and unboundedly
@@ -52,7 +49,7 @@ export function slowDown(
 			const info = request[options.requestPropertyName]
 			info.limit = delayAfter
 			const { used } = info
-      info.remaining = Math.max(0, delayAfter - used)
+			info.remaining = Math.max(0, delayAfter - used)
 			let delay = 0
 			if (used > delayAfter) {
 				const unboundedDelay =
