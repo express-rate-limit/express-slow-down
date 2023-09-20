@@ -1,9 +1,11 @@
 'use strict'
 import type { Request, Response, NextFunction } from 'express'
 import { rateLimit } from 'express-rate-limit'
-import { type AugmentedRequest, type Options } from './types'
+import type { SlowDownRequestHandler, AugmentedRequest, Options } from './types'
 
-export function slowDown(options_: Partial<Options> = {}) {
+export function slowDown(
+	options_: Partial<Options> = {},
+): SlowDownRequestHandler {
 	if (options_.headers || options_.legacyHeaders || options_.standardHeaders) {
 		throw new Error('express-slow-down headers option was removed in v2.0.0')
 	}

@@ -4,7 +4,10 @@ import type {
 	RateLimitInfo,
 	Options as ERLOptions,
 	ValueDeterminingMiddleware,
+	RateLimitRequestHandler,
 } from 'express-rate-limit'
+
+export type SlowDownRequestHandler = RateLimitRequestHandler
 
 export type SlowDownInfo = RateLimitInfo & {
 	delay: number

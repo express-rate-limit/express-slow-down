@@ -1,8 +1,6 @@
 import EventEmitter from 'node:events'
-import { Request, Response, NextFunction } from 'express'
-import { 
-	expect, jest
-} from '@jest/globals'
+import { type Request, type Response, type NextFunction } from 'express'
+import { expect, jest } from '@jest/globals'
 
 function makeRequestPassValidation(request: any) {
 	request.ip = '1.2.3.4'
