@@ -1,6 +1,6 @@
 import { type LegacyStore, type IncrementCallback } from 'express-rate-limit'
 
-export function InvalidStore() {}
+export class InvalidStore {}
 
 export class MockStore implements LegacyStore {
 	incr_was_called = false

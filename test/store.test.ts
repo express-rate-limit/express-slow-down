@@ -1,7 +1,15 @@
+import {
+	describe,
+	expect,
+	beforeEach,
+	afterEach,
+	jest,
+	it,
+} from '@jest/globals'
 import slowDown from '../source/express-slow-down'
-import { MockStore, InvalidStore } from './helpers/mock-store.js'
-import { MockStorePromiseBased } from './helpers/mock-store-promise-based.js'
-import { expectNoDelay, expectNoDelayPromise } from './helpers/requests.js'
+import { MockStore, InvalidStore } from './helpers/mock-store'
+import { MockStorePromiseBased } from './helpers/mock-store-promise-based'
+import { expectNoDelay, expectNoDelayPromise } from './helpers/requests'
 
 describe('store', () => {
 	beforeEach(() => {
@@ -15,9 +23,15 @@ describe('store', () => {
 
 	it('should not allow the use of a store that is not valid', async () => {
 		expect(() => {
-			slowDown({
-				store: new InvalidStore(),
+			const instance = slowDown({
+				store: new InvalidStore() as any,
 			})
+			console.log(instance)
+			instance(
+				{ ip: '1' } as any,
+				{} as any,
+				console.log.bind(console, 'next fn') as any,
+			)
 		}).toThrowError(/store/i)
 	})
 

@@ -1,27 +1,27 @@
-import { Store } from 'express-rate-limit'
+import { type Store } from 'express-rate-limit'
 
 export class MockStorePromiseBased implements Store {
-	this.store = {}
-	this.incr_was_called = false
-	this.resetKey_was_called = false
-	this.decrement_was_called = false
+	store: { [key: string]: number } = {}
+	incr_was_called = false
+	resetKey_was_called = false
+	decrement_was_called = false
 
-	this.increment = (key) => {
+	async increment(key: string) {
 		this.incr_was_called = true
 		this.store[key] = (this.store[key] ?? 0) + 1
 
-		return Promise.resolve({
+		return {
 			totalHits: this.store[key],
 			resetTime: undefined,
-		})
+		}
 	}
 
-	this.decrement = (key) => {
+	decrement(key: string) {
 		this.decrement_was_called = true
 		this.store[key] = (this.store[key] ?? 0) - 1
 	}
 
-	this.resetKey = (key) => {
+	resetKey(key: string) {
 		this.resetKey_was_called = true
 		this.store[key] = 0
 	}

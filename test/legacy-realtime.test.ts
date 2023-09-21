@@ -84,11 +84,10 @@ describe('legacy realtime tests', function () {
 		return new Promise((resolve) => setTimeout(resolve, t))
 	}
 
-	// Todo: figure out why this test is failing - it might be a real bug
-	it.skip('should not allow the use of a store that is not valid', function (done) {
+	it('should not allow the use of a store that is not valid', function (done) {
 		try {
 			slowDown({
-				store: InvalidStore() as any,
+				store: new InvalidStore() as any,
 			})
 		} catch {
 			return done()
