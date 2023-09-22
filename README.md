@@ -1,14 +1,16 @@
 # Express Slow Down
 
-[![CI](https://github.com/nfriedly/express-slow-down/actions/workflows/main.yml/badge.svg)](https://github.com/nfriedly/express-slow-down/actions/workflows/main.yml)[![NPM version](http://badge.fury.io/js/express-slow-down.png)](https://npmjs.org/package/express-slow-down "View this project on NPM")
+[![CI](https://github.com/nfriedly/express-slow-down/actions/workflows/main.yml/badge.svg)](https://github.com/nfriedly/express-slow-down/actions/workflows/main.yml)
+[![npm version](https://img.shields.io/npm/v/express-slow-down.svg)](https://npmjs.org/package/express-slow-down 'View this project on NPM')
+[![npm downloads](https://img.shields.io/npm/dm/express-slow-down)](https://www.npmjs.com/package/express-slow-down)
 
-Basic rate-limiting middleware for Express that slows down responses rather than blocking them outright. Use to limit repeated requests to public APIs and/or endpoints such as password reset.
+Basic rate-limiting middleware for Express that slows down responses rather than blocking them outright. Use to slow repeated requests to public APIs and/or endpoints such as password reset.
 
-Plays nice with [Express Rate Limit](https://npmjs.org/package/express-rate-limit)
-
-Note: this module does not share state with other processes/servers by default. This module was extracted from Express Rate Limit 2.x and can work with any express-rate-limit store.
+Plays nice with (and built on top of) [Express Rate Limit](https://npmjs.org/package/express-rate-limit)
 
 ### Stores
+
+The default memory store does not share state with any other processes or servers. It's sufficient for basic abuse prevention, but an external store will provide more consistency.
 
 express-slow-down uses [express-rate-limit's stores](https://github.com/express-rate-limit/express-rate-limit#store)
 
@@ -110,7 +112,7 @@ A `req.slowDown` property is added to all requests with the following fields:
   // 5th request - 1000ms delay
   ```
 
-- **maxDelayMs**: `number` | `(req, res) =>  number| Promise<number>` - milliseconds - maximum value for `delayMs` after many consecutive attempts, that is, after the n-th request, the delay will be always `maxDelayMs`. Important when your application is running behind a load balancer or reverse proxy that has a request timeout. Defaults to `Infinity`.
+- **maxDelayMs**: `number` | `(req, res) =>  number| Promise<number>` - milliseconds - maximum value for `delayMs` after many consecutive attempts, that is, after the n-th request, the delay will always be `maxDelayMs`. Important when your application is running behind a load balancer or reverse proxy that has a request timeout. Defaults to `Infinity`.
 
   ```javascript
   // Example
@@ -158,7 +160,7 @@ A `req.slowDown` property is added to all requests with the following fields:
 
 ### Additonal options from express-rate-Limit
 
-Because express-rate-limit is used internallo, additional options that it supports may be passed in. See https://github.com/express-rate-limit/express-rate-limit#configuration for the complete list. Note that the `limit` (`max`) option is not supported (use `delayAfter` instead), nor is `handler` or the various headers options.
+Because express-rate-limit is used internally, additional options that it supports may be passed in. See https://github.com/express-rate-limit/express-rate-limit#configuration for the complete list. Note that the `limit` (`max`) option is not supported (use `delayAfter` instead), nor is the `handler` or various headers options.
 
 ## License
 
