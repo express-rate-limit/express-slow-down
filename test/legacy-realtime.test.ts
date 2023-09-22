@@ -1,11 +1,13 @@
 import assert from 'node:assert'
-import eventEmitter from 'node:events'
 import express, { type Application } from 'express'
 import request from 'supertest'
 import { describe, beforeEach, it } from '@jest/globals'
 import slowDown from '../source/express-slow-down'
 import type { SlowDownRequestHandler } from '../source/types'
 import { MockStore, InvalidStore } from './helpers/mock-store'
+
+// These tests are callback based, but the linter doesn't understand that when the function also returns a promise
+/* eslint @typescript-eslint/no-floating-promises: "off" */
 
 describe('legacy realtime tests', function () {
 	let app!: Application
@@ -42,7 +44,7 @@ describe('legacy realtime tests', function () {
 			res.on('error', () => {
 				res.end()
 			})
-			res.emit('error', new Error())
+			res.emit('error', new Error('/response_emit_error hit'))
 		})
 		return app
 	}
@@ -81,6 +83,7 @@ describe('legacy realtime tests', function () {
 	}
 
 	async function sleep(t: number) {
+		// eslint-disable-next-line no-promise-executor-return
 		return new Promise((resolve) => setTimeout(resolve, t))
 	}
 
@@ -98,7 +101,7 @@ describe('legacy realtime tests', function () {
 
 	it('should call incr on the store', async () => {
 		const store = new MockStore()
-		assert(!store.incr_was_called)
+		assert(!store.incrWasCalled)
 
 		createAppWith(
 			slowDown({
@@ -108,7 +111,7 @@ describe('legacy realtime tests', function () {
 		)
 
 		await request(app).get('/')
-		assert(store.incr_was_called)
+		assert(store.incrWasCalled)
 	})
 
 	it('should call resetKey on the store', function () {
@@ -118,7 +121,7 @@ describe('legacy realtime tests', function () {
 			validate: false,
 		})
 		limiter.resetKey('key')
-		assert(store.resetKey_was_called)
+		assert(store.resetKeyWasCalled)
 	})
 
 	it('should allow the first request with minimal delay', async function () {
@@ -375,7 +378,7 @@ describe('legacy realtime tests', function () {
 			}),
 		)
 		fastRequest(done, function () {
-			if (store.decrement_was_called) {
+			if (store.decrementWasCalled) {
 				done()
 			} else {
 				done(new Error('decrement was not called on the store'))
@@ -395,7 +398,7 @@ describe('legacy realtime tests', function () {
 			.get('/bad_response_status')
 			.expect(403)
 			.end(() => {
-				if (store.decrement_was_called) {
+				if (store.decrementWasCalled) {
 					done()
 				} else {
 					done(new Error('decrement was not called on the store'))
@@ -415,7 +418,7 @@ describe('legacy realtime tests', function () {
 		)
 		const checkStoreDecremented = () => {
 			if (longResponseClosed) {
-				if (store.decrement_was_called) {
+				if (store.decrementWasCalled) {
 					done()
 				} else {
 					done(new Error('decrement was not called on the store'))
@@ -439,7 +442,7 @@ describe('legacy realtime tests', function () {
 		request(app)
 			.get('/response_emit_error')
 			.end(() => {
-				if (store.decrement_was_called) {
+				if (store.decrementWasCalled) {
 					done()
 				} else {
 					done(new Error('decrement was not called on the store'))
@@ -458,7 +461,7 @@ describe('legacy realtime tests', function () {
 		)
 
 		fastRequest(done, function () {
-			if (store.decrement_was_called) {
+			if (store.decrementWasCalled) {
 				done(new Error('decrement was called on the store'))
 			} else {
 				done()
@@ -483,7 +486,7 @@ describe('legacy realtime tests', function () {
 					return done(error)
 				}
 
-				if (store.decrement_was_called) {
+				if (store.decrementWasCalled) {
 					done()
 				} else {
 					done(new Error('decrement was not called on the store'))
@@ -493,7 +496,7 @@ describe('legacy realtime tests', function () {
 
 	it('should not excute slow down timer in case of req closed during delay', async () => {
 		const requestMock = {}
-		const resMock = new eventEmitter()
+		const resMock = new EventTarget()
 		const currentLimiterMiddleWare = slowDown({
 			delayAfter: 0,
 			delayMs: 100,
@@ -504,9 +507,11 @@ describe('legacy realtime tests', function () {
 			throw new Error('setTimeout should not excute!')
 		}
 
+		// eslint-disable-next-line @typescript-eslint/await-thenable
 		await currentLimiterMiddleWare(requestMock as any, resMock as any, next)
 		resMock.emit('close')
 
+		// eslint-disable-next-line no-promise-executor-return
 		await new Promise((resolve) => setTimeout(resolve, 200))
 	})
 

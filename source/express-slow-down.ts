@@ -1,4 +1,3 @@
-'use strict'
 import type { Request, Response, NextFunction } from 'express'
 import { rateLimit } from 'express-rate-limit'
 import type { SlowDownRequestHandler, AugmentedRequest, Options } from './types'
@@ -6,6 +5,7 @@ import type { SlowDownRequestHandler, AugmentedRequest, Options } from './types'
 export function slowDown(
 	options_: Partial<Options> = {},
 ): SlowDownRequestHandler {
+	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	if (options_.headers || options_.legacyHeaders || options_.standardHeaders) {
 		throw new Error('express-slow-down headers option was removed in v2.0.0')
 	}
@@ -24,7 +24,7 @@ export function slowDown(
 	const options = {
 		// Default settings that may be overridden
 		delayAfter: 1, // How many requests to allow through before starting to delay responses
-		delayMs(used: number, request: AugmentedRequest, res: Response) {
+		delayMs(used: number, request: AugmentedRequest, response: Response) {
 			const delayAfter = request[this.requestPropertyName].limit
 			return (used - delayAfter) * 1000
 		}, // Number or function (may be async)
@@ -40,10 +40,10 @@ export function slowDown(
 		limit: 0, // We want the handler to always run
 		legacyHeaders: false,
 		standardHeaders: false,
-		async handler(_request: Request, res: Response, next: NextFunction) {
+		async handler(_request: Request, response: Response, next: NextFunction) {
 			const delayAfter =
 				typeof options.delayAfter === 'function'
-					? await options.delayAfter(_request, res)
+					? await options.delayAfter(_request, response)
 					: options.delayAfter
 			const request = _request as AugmentedRequest
 			const info = request[options.requestPropertyName]
@@ -54,11 +54,11 @@ export function slowDown(
 			if (used > delayAfter) {
 				const unboundedDelay =
 					typeof options.delayMs === 'function'
-						? await options.delayMs(used, request, res)
+						? await options.delayMs(used, request, response)
 						: options.delayMs
 				const maxDelayMs =
 					typeof options.maxDelayMs === 'function'
-						? await options.maxDelayMs(request, res)
+						? await options.maxDelayMs(request, response)
 						: options.maxDelayMs
 				delay = Math.max(0, Math.min(unboundedDelay, maxDelayMs))
 			}
@@ -72,10 +72,9 @@ export function slowDown(
 			const timerId = setTimeout(() => {
 				next()
 			}, delay)
-			res.on('close', () => {
+			response.on('close', () => {
 				clearTimeout(timerId)
 			})
-			return timerId // Todo: do i need this for tests?S
 		},
 	}
 

@@ -1,4 +1,3 @@
-import EventEmitter from 'node:events'
 import {
 	describe,
 	expect,
@@ -44,7 +43,7 @@ describe('request skipping', () => {
 
 	it('should decrement hits with success response and skipSuccessfulRequests', async () => {
 		const request = {}
-		const res: any = new EventEmitter()
+		const res: any = new EventTarget()
 		jest.spyOn(res, 'on')
 		const store = new MockStore()
 		const instance = slowDown({
@@ -62,7 +61,7 @@ describe('request skipping', () => {
 
 	it('should not decrement hits with error response and skipSuccessfulRequests', async () => {
 		const request = {}
-		const res: any = new EventEmitter()
+		const res: any = new EventTarget()
 		const store = new MockStore()
 		const instance = slowDown({
 			skipSuccessfulRequests: true,
@@ -79,7 +78,7 @@ describe('request skipping', () => {
 
 	it('should not decrement hits with success response and skipFailedRequests', async () => {
 		const request = {}
-		const res: any = new EventEmitter()
+		const res: any = new EventTarget()
 		jest.spyOn(res, 'on')
 		const store = new MockStore()
 		const instance = slowDown({
@@ -96,7 +95,7 @@ describe('request skipping', () => {
 
 	it('should decrement hits with error status code and skipFailedRequests', async () => {
 		const request = {}
-		const res: any = new EventEmitter()
+		const res: any = new EventTarget()
 		const store = new MockStore()
 		const instance = slowDown({
 			skipFailedRequests: true,
@@ -112,7 +111,7 @@ describe('request skipping', () => {
 
 	it('should decrement hits with closed unfinished response and skipFailedRequests', async () => {
 		const request = {}
-		const res: any = new EventEmitter()
+		const res: any = new EventTarget()
 		const store = new MockStore()
 		const instance = slowDown({
 			skipFailedRequests: true,
@@ -128,7 +127,7 @@ describe('request skipping', () => {
 
 	it('should decrement hits with error event on response and skipFailedRequests', async () => {
 		const request = {}
-		const res: any = new EventEmitter()
+		const res: any = new EventTarget()
 		const store = new MockStore()
 		const instance = slowDown({
 			skipFailedRequests: true,

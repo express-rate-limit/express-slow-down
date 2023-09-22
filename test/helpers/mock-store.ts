@@ -1,16 +1,17 @@
 import { type LegacyStore, type IncrementCallback } from 'express-rate-limit'
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class InvalidStore {}
 
 export class MockStore implements LegacyStore {
-	incr_was_called = false
-	resetKey_was_called = false
-	decrement_was_called = false
+	incrWasCalled = false
+	resetKeyWasCalled = false
+	decrementWasCalled = false
 	counter = 0
 
 	incr(key: string, cb: IncrementCallback): void {
 		this.counter++
-		this.incr_was_called = true
+		this.incrWasCalled = true
 
 		cb(undefined, this.counter, new Date())
 	}
@@ -18,11 +19,11 @@ export class MockStore implements LegacyStore {
 	decrement(key: string): void {
 		// Console.log('decrementing')
 		this.counter--
-		this.decrement_was_called = true
+		this.decrementWasCalled = true
 	}
 
 	resetKey(key: string): void {
-		this.resetKey_was_called = true
+		this.resetKeyWasCalled = true
 		this.counter = 0
 	}
 }

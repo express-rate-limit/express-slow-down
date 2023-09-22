@@ -27,6 +27,7 @@ describe('realtime tests', () => {
 			}
 		})
 
+		// eslint-disable-next-line @typescript-eslint/no-floating-promises
 		request(app)
 			.post('/upload')
 			.send({ test: true })
