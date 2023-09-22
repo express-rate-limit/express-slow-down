@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events'
 import {
 	describe,
 	expect,
@@ -19,10 +20,10 @@ describe('Connection closed during delay tests', () => {
 	})
 
 	it('should not excute slow down timer in case of req closed', async () => {
-		const request = new EventTarget() as any
-		const res = new EventTarget() as any
+		const request = new EventEmitter() as any
+		const res = new EventEmitter() as any
 		// Gotta do a bunch of sillyness to convinve it the request isn't finished at the start
-		request.socket = new EventTarget()
+		request.socket = new EventEmitter()
 		request.socket.readable = true
 		request.complete = false
 		request.readable = true

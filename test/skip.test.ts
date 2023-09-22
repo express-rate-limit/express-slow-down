@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events'
 import {
 	describe,
 	expect,
@@ -43,7 +44,7 @@ describe('request skipping', () => {
 
 	it('should decrement hits with success response and skipSuccessfulRequests', async () => {
 		const request = {}
-		const res: any = new EventTarget()
+		const res: any = new EventEmitter()
 		jest.spyOn(res, 'on')
 		const store = new MockStore()
 		const instance = slowDown({
@@ -51,17 +52,17 @@ describe('request skipping', () => {
 			store,
 		})
 		await expectNoDelay(instance, request, res)
-		expect(store.decrement_was_called).toBeFalsy()
+		expect(store.decrementWasCalled).toBeFalsy()
 		expect(res.on).toHaveBeenCalled()
 
 		res.statusCode = 200
 		res.emit('finish')
-		expect(store.decrement_was_called).toBeTruthy()
+		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
 	it('should not decrement hits with error response and skipSuccessfulRequests', async () => {
 		const request = {}
-		const res: any = new EventTarget()
+		const res: any = new EventEmitter()
 		const store = new MockStore()
 		const instance = slowDown({
 			skipSuccessfulRequests: true,
@@ -71,14 +72,14 @@ describe('request skipping', () => {
 
 		res.statusCode = 400
 		res.emit('finish')
-		expect(store.decrement_was_called).toBeFalsy()
+		expect(store.decrementWasCalled).toBeFalsy()
 	})
 
 	// SkipFailedRequests
 
 	it('should not decrement hits with success response and skipFailedRequests', async () => {
 		const request = {}
-		const res: any = new EventTarget()
+		const res: any = new EventEmitter()
 		jest.spyOn(res, 'on')
 		const store = new MockStore()
 		const instance = slowDown({
@@ -90,53 +91,53 @@ describe('request skipping', () => {
 
 		res.statusCode = 200
 		res.emit('finish')
-		expect(store.decrement_was_called).toBeFalsy()
+		expect(store.decrementWasCalled).toBeFalsy()
 	})
 
 	it('should decrement hits with error status code and skipFailedRequests', async () => {
 		const request = {}
-		const res: any = new EventTarget()
+		const res: any = new EventEmitter()
 		const store = new MockStore()
 		const instance = slowDown({
 			skipFailedRequests: true,
 			store,
 		})
 		await expectNoDelay(instance, request, res)
-		expect(store.decrement_was_called).toBeFalsy()
+		expect(store.decrementWasCalled).toBeFalsy()
 
 		res.statusCode = 400
 		res.emit('finish')
-		expect(store.decrement_was_called).toBeTruthy()
+		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
 	it('should decrement hits with closed unfinished response and skipFailedRequests', async () => {
 		const request = {}
-		const res: any = new EventTarget()
+		const res: any = new EventEmitter()
 		const store = new MockStore()
 		const instance = slowDown({
 			skipFailedRequests: true,
 			store,
 		})
 		await expectNoDelay(instance, request, res)
-		expect(store.decrement_was_called).toBeFalsy()
+		expect(store.decrementWasCalled).toBeFalsy()
 
 		res.finished = false
 		res.emit('close')
-		expect(store.decrement_was_called).toBeTruthy()
+		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
 	it('should decrement hits with error event on response and skipFailedRequests', async () => {
 		const request = {}
-		const res: any = new EventTarget()
+		const res: any = new EventEmitter()
 		const store = new MockStore()
 		const instance = slowDown({
 			skipFailedRequests: true,
 			store,
 		})
 		await expectNoDelay(instance, request, res)
-		expect(store.decrement_was_called).toBeFalsy()
+		expect(store.decrementWasCalled).toBeFalsy()
 
 		res.emit('error')
-		expect(store.decrement_was_called).toBeTruthy()
+		expect(store.decrementWasCalled).toBeTruthy()
 	})
 })

@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import EventEmitter from 'node:events'
 import express, { type Application } from 'express'
 import request from 'supertest'
 import { describe, beforeEach, it } from '@jest/globals'
@@ -496,7 +497,7 @@ describe('legacy realtime tests', function () {
 
 	it('should not excute slow down timer in case of req closed during delay', async () => {
 		const requestMock = {}
-		const resMock = new EventTarget()
+		const resMock = new EventEmitter()
 		const currentLimiterMiddleWare = slowDown({
 			delayAfter: 0,
 			delayMs: 100,

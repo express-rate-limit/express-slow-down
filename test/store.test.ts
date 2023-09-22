@@ -37,13 +37,13 @@ describe('store', () => {
 
 	it('should call incr on the store', async () => {
 		const store = new MockStore()
-		expect(store.incr_was_called).toBeFalsy()
+		expect(store.incrWasCalled).toBeFalsy()
 
 		const instance = slowDown({
 			store,
 		})
 		await expectNoDelay(instance)
-		expect(store.incr_was_called).toBeTruthy()
+		expect(store.incrWasCalled).toBeTruthy()
 	})
 
 	it('should call resetKey on the store', function () {
@@ -52,25 +52,25 @@ describe('store', () => {
 			store,
 		})
 		limiter.resetKey('key')
-		expect(store.resetKey_was_called).toBeTruthy()
+		expect(store.resetKeyWasCalled).toBeTruthy()
 	})
 
 	describe('promise based', () => {
 		it('should call increment on the store', async () => {
 			const store = new MockStorePromiseBased()
-			expect(store.incr_was_called).toBeFalsy()
+			expect(store.incrWasCalled).toBeFalsy()
 
 			const instance = slowDown({ store })
 
 			await expectNoDelayPromise(instance)
-			expect(store.incr_was_called).toBeTruthy()
+			expect(store.incrWasCalled).toBeTruthy()
 		})
 
 		it('should call resetKey on the store', function () {
 			const store = new MockStorePromiseBased()
 			const limiter = slowDown({ store })
 			limiter.resetKey('key')
-			expect(store.resetKey_was_called).toBeTruthy()
+			expect(store.resetKeyWasCalled).toBeTruthy()
 		})
 	})
 })

@@ -92,6 +92,7 @@
           "@typescript-eslint/no-unsafe-return": 0,
           "import/extensions": 0,
           "import/no-named-as-default": 0,
+          "unicorn/prefer-event-target": 0,
           "unicorn/prevent-abbreviations": 0
         }
       }

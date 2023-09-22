@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events'
 import { type Request, type Response, type NextFunction } from 'express'
 import { expect, jest } from '@jest/globals'
 
@@ -13,8 +14,8 @@ function makeRequestPassValidation(request: any) {
 
 export async function expectNoDelay(
 	instance: any,
-	request: any = new EventTarget(),
-	response: any = new EventTarget(),
+	request: any = new EventEmitter(),
+	response: any = new EventEmitter(),
 ) {
 	const next = jest.fn()
 	makeRequestPassValidation(request)
@@ -26,8 +27,8 @@ export async function expectNoDelay(
 export async function expectDelay(
 	instance: any,
 	expectedDelay: number,
-	request: any = new EventTarget(),
-	response: any = new EventTarget(),
+	request: any = new EventEmitter(),
+	response: any = new EventEmitter(),
 ) {
 	const next = jest.fn()
 	makeRequestPassValidation(request)
