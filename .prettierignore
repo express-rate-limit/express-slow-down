@@ -2,4 +2,6 @@
 npm-debug.log
 .idea/
 dist/
-coverage/
+
+package*.json
+test/

@@ -60,8 +60,10 @@
     "build:esm": "esbuild --platform=node --bundle --target=es2022 --format=esm --outfile=dist/express-slow-down.mjs source/express-slow-down.ts",
     "build:types": "dts-bundle-generator --out-file=dist/express-slow-down.d.ts source/express-slow-down.ts && cp dist/express-slow-down.d.ts dist/express-slow-down.d.cts && cp dist/express-slow-down.d.ts dist/express-slow-down.d.mts",
     "compile": "run-s clean build:*",
-    "lint": "xo",
-    "format": "xo --fix",
+    "lint:code": "xo",
+    "lint:rest": "prettier --check .",
+    "format:code": "xo --fix",
+    "format:rest": "prettier --write .",
     "test": "run-s lint:* test:lib",
     "test:lib": "jest",
     "pre-commit": "lint-staged",
@@ -128,6 +130,6 @@
   "prettier": "@express-rate-limit/prettier",
   "lint-staged": {
     "{source,test}/**/*.ts": "xo --fix",
-    "**/*.{json,yaml,md}": "prettier --write "
+    "**/*.{json,yaml,md}": "prettier --write"
   }
 }
