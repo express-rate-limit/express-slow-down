@@ -100,14 +100,17 @@
   "xo": {
     "prettier": true,
     "rules": {
-      "@typescript-eslint/no-empty-function": 0,
-      "@typescript-eslint/no-dynamic-delete": 0,
+      "@typescript-eslint/prefer-nullish-coalescing": [
+      	"error",
+      	{
+      		"ignoreConditionalTests": true
+      	}
+     	],
       "@typescript-eslint/no-confusing-void-expression": 0,
       "@typescript-eslint/consistent-indexed-object-style": [
         "error",
         "index-signature"
-      ],
-      "n/no-unsupported-features/es-syntax": 0
+      ]
     },
     "overrides": [
       {
