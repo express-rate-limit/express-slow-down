@@ -2,13 +2,12 @@
   "name": "express-slow-down",
   "version": "1.6.0",
   "description": "Basic IP rate-limiting middleware for Express that slows down responses rather than blocking the user.",
-  "homepage": "https://github.com/express-rate-limit/express-slow-down",
+  "homepage": "https://github.com/express-rate-limit/express-rate-limit",
   "author": {
     "name": "Nathan Friedly",
     "url": "http://nfriedly.com/"
   },
   "license": "MIT",
-  "homepage": "https://github.com/express-rate-limit/express-rate-limit",
   "repository": "https://github.com/express-rate-limit/express-rate-limit",
   "keywords": [
     "express-rate-limit",
@@ -62,10 +61,12 @@
     "compile": "run-s clean build:*",
     "lint:code": "xo",
     "lint:rest": "prettier --check .",
+    "lint": "run-s lint:*",
     "format:code": "xo --fix",
     "format:rest": "prettier --write .",
-    "test": "run-s lint:* test:lib",
+    "format": "run-s format:*",
     "test:lib": "jest",
+    "test": "run-s lint test:lib",
     "pre-commit": "lint-staged",
     "prepare": "run-s compile && husky install config/husky"
   },
@@ -73,28 +74,25 @@
     "express": "^4 || ^5"
   },
   "dependencies": {
-    "express-rate-limit": "^7.0.0"
+    "express-rate-limit": "^7.0.1"
   },
   "devDependencies": {
-    "@express-rate-limit/prettier": "^1.1.0",
-    "@express-rate-limit/tsconfig": "^1.0.0",
+    "@express-rate-limit/prettier": "^1.1.1",
+    "@express-rate-limit/tsconfig": "^1.0.2",
     "@jest/globals": "^29.7.0",
-    "@types/express": "^4.17.17",
+    "@types/express": "^4.17.18",
     "@types/supertest": "^2.0.12",
-    "body-parser": "^1.20.0",
+    "body-parser": "1.20.2",
     "del-cli": "^5.1.0",
     "dts-bundle-generator": "^8.0.1",
     "esbuild": "^0.19.3",
-    "eslint-config-prettier": "^7.0.0",
-    "eslint-plugin-prettier": "^3.2.0",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "husky": "^8.0.3",
-    "jest": "^29.6.2",
+    "jest": "^29.7.0",
     "lint-staged": "^14.0.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.2.1",
-    "pretty-quick": "^3.1.0",
-    "supertest": "^6.2.4",
+    "prettier": "^3.0.3",
+    "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
     "xo": "^0.56.0"

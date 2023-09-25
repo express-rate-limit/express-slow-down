@@ -1,7 +1,20 @@
-/node_modules/
-npm-debug.log
-.idea/
-dist/
+# /.prettierignore
+# Tells Prettier to ignore these files
 
-package*.json
-test/
+package.json
+package-lock.json
+pnpm-lock.yaml
+
+# The following is copied over from .gitignore
+
+node_modules/
+dist/
+coverage/
+
+.vscode/
+.idea/
+
+*.log
+*.tmp
+*.bak
+*.tgz
