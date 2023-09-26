@@ -3,8 +3,8 @@
 <div align="center">
 
 [![tests](https://github.com/express-rate-limit/express-slow-down/actions/workflows/ci.yaml/badge.svg)](https://github.com/express-rate-limit/express-slow-down/actions/workflows/ci.yaml)
-[![npm version](https://img.shields.io/npm/v/express-rate-limit.svg)](https://npmjs.org/package/express-rate-limit 'View this project on NPM')
-[![npm downloads](https://img.shields.io/npm/dm/express-rate-limit)](https://www.npmjs.com/package/express-rate-limit)
+[![npm version](https://img.shields.io/npm/v/express-slow-down.svg)](https://npmjs.org/package/express-slow-down 'View this project on NPM')
+[![npm downloads](https://img.shields.io/npm/dm/express-slow-down)](https://www.npmjs.com/package/express-slow-down)
 
 Basic rate-limiting middleware for Express that slows down responses rather than
 blocking them outright. Use to slow repeated requests to public APIs and/or
