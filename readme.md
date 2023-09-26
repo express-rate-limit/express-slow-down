@@ -111,8 +111,8 @@ import { slowDown } from 'express-slow-down'
 
 const apiLimiter = slowDown({
 	windowMs: 15 * 60 * 1000, // 15 minutes
-	delayAfter: 1 // Allow only one request to go at full-speed.
-  delayMs: (hits) => hits * hits * 1000, // 2nd request has a 4 second delay, 3rd is 9 seconds, 4th is 16, etc.
+	delayAfter: 1, // Allow only one request to go at full-speed.
+  	delayMs: (hits) => hits * hits * 1000, // 2nd request has a 4 second delay, 3rd is 9 seconds, 4th is 16, etc.
 })
 
 // Apply the delay middleware to API calls only.
@@ -127,8 +127,8 @@ import { MemcachedStore } from 'rate-limit-memcached'
 
 const speedLimiter = slowDown({
 	windowMs: 15 * 60 * 1000, // 15 minutes
-	delayAfter: 1 // Allow only one request to go at full-speed.
-  delayMs: (hits) => hits * hits * 1000, // Add exponential delay after 1 request.
+	delayAfter: 1, // Allow only one request to go at full-speed.
+  	delayMs: (hits) => hits * hits * 1000, // Add exponential delay after 1 request.
 	store: new MemcachedStore({
 		/* ... */
 	}), // Use the external store
