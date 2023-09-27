@@ -3,9 +3,9 @@ import EventEmitter from 'node:events'
 import express, { type Application } from 'express'
 import request from 'supertest'
 import { describe, beforeEach, it } from '@jest/globals'
-import slowDown from '../source/express-slow-down'
-import type { SlowDownRequestHandler } from '../source/types'
-import { MockStore, InvalidStore } from './helpers/mock-store'
+import slowDown from '../source/index.js'
+import type { SlowDownRequestHandler } from '../source/types.js'
+import { MockStore, InvalidStore } from './helpers/mock-stores.js'
 
 // These tests are callback based, but the linter doesn't understand that when the function also returns a promise
 /* eslint @typescript-eslint/no-floating-promises: "off" */

@@ -1,8 +1,15 @@
+// /test/helpers/requests.ts
+// Exports functions that check for delay
+
 import EventEmitter from 'node:events'
-import { type Request, type Response, type NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import { expect, jest } from '@jest/globals'
 
-function makeRequestPassValidation(request: any) {
+/**
+ * Converts an `EventEmitter` into an Express `req` object, at least in the
+ * eyes of the middleware.
+ */
+const impersonateRequest = (request: any) => {
 	request.ip = '1.2.3.4'
 	request.app = {
 		get: () => false,
@@ -10,20 +17,32 @@ function makeRequestPassValidation(request: any) {
 	request.headers = []
 }
 
-// These helpers expect timers to be mocked and setTimeout to be spied on
+/**
+ * NOTE: these helpers expect timers to be mocked and setTimeout to be spied on.
+ */
 
-export async function expectNoDelay(
+/**
+ * Call the instance with a request and response, and make sure the request was
+ * NOT delayed.
+ */
+export const expectNoDelay = async (
 	instance: any,
 	request: any = new EventEmitter(),
 	response: any = new EventEmitter(),
-) {
+) => {
 	const next = jest.fn()
-	makeRequestPassValidation(request)
+	impersonateRequest(request)
+
 	await instance(request as Request, response as Response, next as NextFunction)
+
 	expect(setTimeout).not.toHaveBeenCalled()
 	expect(next).toHaveBeenCalled()
 }
 
+/**
+ * Call the instance with a request and response, and make sure the request was
+ * delayed by a certain amount of time.
+ */
 export async function expectDelay(
 	instance: any,
 	expectedDelay: number,
@@ -31,7 +50,7 @@ export async function expectDelay(
 	response: any = new EventEmitter(),
 ) {
 	const next = jest.fn()
-	makeRequestPassValidation(request)
+	impersonateRequest(request)
 
 	// Set the timeout
 	await instance(request as Request, response as Response, next as NextFunction)

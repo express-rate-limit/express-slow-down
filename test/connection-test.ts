@@ -1,15 +1,11 @@
-import EventEmitter from 'node:events'
-import {
-	describe,
-	expect,
-	beforeEach,
-	afterEach,
-	jest,
-	it,
-} from '@jest/globals'
-import slowDown from '../source/express-slow-down'
+// /test/connection-test.ts
+// Tests the behaviour upon abrupt connection closure
 
-describe('Connection closed during delay tests', () => {
+import EventEmitter from 'node:events'
+import { jest } from '@jest/globals'
+import slowDown from '../source/index.js'
+
+describe('connection', () => {
 	beforeEach(() => {
 		jest.useFakeTimers()
 		jest.spyOn(global, 'setTimeout')
@@ -22,7 +18,8 @@ describe('Connection closed during delay tests', () => {
 	it('should not excute slow down timer in case of req closed', async () => {
 		const request = new EventEmitter() as any
 		const res = new EventEmitter() as any
-		// Gotta do a bunch of sillyness to convinve it the request isn't finished at the start
+
+		// Gotta do a bunch of sillyness to convince it the request isn't finished at the start.
 		request.socket = new EventEmitter()
 		request.socket.readable = true
 		request.complete = false
@@ -37,16 +34,15 @@ describe('Connection closed during delay tests', () => {
 		const next = jest.fn()
 
 		instance(request, res, next)
-
 		expect(next).not.toHaveBeenCalled()
 
-		request.socket.emit('close') // On-finish ignores the close event on the req/res, and only listens for it on the socket (?)
+		// `on-finish` ignores the close event on the req/res, and only listens for
+		// it on the socket (?)
+		request.socket.emit('close')
 		request.emit('close')
 		res.emit('close')
-		// Req.emit('end');
 
 		jest.advanceTimersByTime(1001)
-
 		expect(next).not.toHaveBeenCalled()
 	})
 })

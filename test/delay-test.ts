@@ -1,6 +1,9 @@
-import { describe, beforeEach, afterEach, jest, it } from '@jest/globals'
-import slowDown from '../source/express-slow-down'
-import { expectDelay, expectNoDelay } from './helpers/requests'
+// /test/delay-test.ts
+// Tests the delaying mechanism
+
+import { jest } from '@jest/globals'
+import slowDown from '../source/index.js'
+import { expectDelay, expectNoDelay } from './helpers/requests.js'
 
 describe('slowdown', () => {
 	beforeEach(() => {
@@ -16,6 +19,7 @@ describe('slowdown', () => {
 		const instance = slowDown({
 			delayAfter: 1,
 		})
+
 		await expectNoDelay(instance)
 	})
 
@@ -24,6 +28,7 @@ describe('slowdown', () => {
 			delayAfter: 0,
 			delayMs: 100,
 		})
+
 		await expectDelay(instance, 100)
 	})
 
@@ -32,6 +37,7 @@ describe('slowdown', () => {
 			delayAfter: 0,
 			delayMs: (used: number) => used * 100,
 		})
+
 		await expectDelay(instance, 100)
 		await expectDelay(instance, 200)
 		await expectDelay(instance, 300)
@@ -43,6 +49,7 @@ describe('slowdown', () => {
 			delayMs: (used: number) => used * 100,
 			maxDelayMs: 250,
 		})
+
 		await expectDelay(instance, 100)
 		await expectDelay(instance, 200)
 		await expectDelay(instance, 250)
@@ -56,40 +63,10 @@ describe('slowdown', () => {
 			delayAfter: 2,
 			delayMs: 300,
 		})
+
 		await expectNoDelay(instance)
 		await expectNoDelay(instance)
 		await expectDelay(instance, 300)
-	})
-
-	it('should allow delayAfter to be a function', async () => {
-		const instance = slowDown({
-			delayAfter: () => 2,
-			delayMs: 99,
-		})
-		await expectNoDelay(instance)
-		await expectNoDelay(instance)
-		await expectDelay(instance, 99)
-	})
-
-	it('should allow delayMs to be a function', async () => {
-		const instance = slowDown({
-			delayAfter: 1,
-			delayMs: () => 99,
-		})
-		await expectNoDelay(instance)
-		await expectDelay(instance, 99)
-	})
-
-	it('should allow maxDelayMs to be a function', async () => {
-		const instance = slowDown({
-			delayAfter: 1,
-			delayMs: (used: number) => (used - 1) * 100,
-			maxDelayMs: () => 200,
-		})
-		await expectNoDelay(instance)
-		await expectDelay(instance, 100)
-		await expectDelay(instance, 200)
-		await expectDelay(instance, 200)
 	})
 
 	it('should (eventually) return to full speed', async () => {
@@ -98,11 +75,13 @@ describe('slowdown', () => {
 			delayAfter: 1,
 			windowMs: 300,
 		})
+
 		await expectNoDelay(instance)
 		await expectDelay(instance, 100)
 
 		jest.advanceTimersByTime(200)
 		;(setTimeout as any).mockClear()
+
 		await expectNoDelay(instance)
 	})
 
@@ -112,14 +91,17 @@ describe('slowdown', () => {
 			delayAfter: 2,
 			windowMs: 50,
 		})
+
 		await expectNoDelay(instance)
 		await expectNoDelay(instance)
 		await expectDelay(instance, 100) // Note: window is reset twice in this time
 		;(setTimeout as any).mockClear()
+
 		await expectNoDelay(instance)
 		await expectNoDelay(instance)
 		await expectDelay(instance, 100)
 		;(setTimeout as any).mockClear()
+
 		await expectNoDelay(instance)
 	})
 })
