@@ -60,7 +60,7 @@ describe('store', () => {
 
 	describe('promise based store', () => {
 		it('should call increment on the store', async () => {
-			const store = new MMockStore()
+			const store = new MockStore()
 			expect(store.incrWasCalled).toBeFalsy()
 
 			const instance = slowDown({ store })
