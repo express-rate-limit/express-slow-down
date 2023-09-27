@@ -37,7 +37,7 @@ describe('store', () => {
 		})
 
 		it('should call incr on the store', async () => {
-			const store = new MockStore()
+			const store = new MockLegacyStore()
 			expect(store.incrWasCalled).toBeFalsy()
 
 			const instance = slowDown({
@@ -48,7 +48,7 @@ describe('store', () => {
 		})
 
 		it('should call resetKey on the store', function () {
-			const store = new MockStore()
+			const store = new MockLegacyStore()
 			const limiter = slowDown({
 				store,
 			})
@@ -60,7 +60,7 @@ describe('store', () => {
 
 	describe('promise based store', () => {
 		it('should call increment on the store', async () => {
-			const store = new MockStorePromiseBased()
+			const store = new MMockStore()
 			expect(store.incrWasCalled).toBeFalsy()
 
 			const instance = slowDown({ store })
@@ -69,7 +69,7 @@ describe('store', () => {
 		})
 
 		it('should call resetKey on the store', function () {
-			const store = new MockStorePromiseBased()
+			const store = new MockStore()
 			const limiter = slowDown({ store })
 
 			limiter.resetKey('key')

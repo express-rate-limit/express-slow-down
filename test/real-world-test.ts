@@ -9,7 +9,7 @@ import slowDown from '../source/index.js'
 import { MockStore } from './helpers/mock-stores.js'
 
 describe('real-world', () => {
-	it('should handle a req being processed before `express-slow-down` (#31 & #32)', (done) => {
+	it('should handle a req being processed before `express-slow-down` (#31 & #32)', async () => {
 		const app = createServer()
 
 		// Note: in real-world usabe, body parser middleware should come AFTER
