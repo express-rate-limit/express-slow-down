@@ -38,13 +38,13 @@ describe('store', () => {
 
 		it('should call incr on the store', async () => {
 			const store = new MockLegacyStore()
-			expect(store.incrWasCalled).toBeFalsy()
+			expect(store.incrementWasCalled).toBeFalsy()
 
 			const instance = slowDown({
 				store,
 			})
 			await expectNoDelay(instance)
-			expect(store.incrWasCalled).toBeTruthy()
+			expect(store.incrementWasCalled).toBeTruthy()
 		})
 
 		it('should call resetKey on the store', function () {
@@ -61,11 +61,11 @@ describe('store', () => {
 	describe('promise based store', () => {
 		it('should call increment on the store', async () => {
 			const store = new MockStore()
-			expect(store.incrWasCalled).toBeFalsy()
+			expect(store.incrementWasCalled).toBeFalsy()
 
 			const instance = slowDown({ store })
 			await expectNoDelayPromise(instance)
-			expect(store.incrWasCalled).toBeTruthy()
+			expect(store.incrementWasCalled).toBeTruthy()
 		})
 
 		it('should call resetKey on the store', function () {

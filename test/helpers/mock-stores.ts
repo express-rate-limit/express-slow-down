@@ -8,12 +8,12 @@ export class InvalidStore {}
 
 export class MockStore implements Store {
 	store: { [key: string]: number } = {}
-	incrWasCalled = false
+	incrementWasCalled = false
 	resetKeyWasCalled = false
 	decrementWasCalled = false
 
 	async increment(key: string) {
-		this.incrWasCalled = true
+		this.incrementWasCalled = true
 		this.store[key] = (this.store[key] ?? 0) + 1
 
 		return {
@@ -34,14 +34,14 @@ export class MockStore implements Store {
 }
 
 export class MockLegacyStore implements LegacyStore {
-	incrWasCalled = false
+	incrementWasCalled = false
 	resetKeyWasCalled = false
 	decrementWasCalled = false
 	counter = 0
 
 	incr(key: string, cb: IncrementCallback): void {
 		this.counter++
-		this.incrWasCalled = true
+		this.incrementWasCalled = true
 
 		cb(undefined, this.counter, new Date())
 	}
