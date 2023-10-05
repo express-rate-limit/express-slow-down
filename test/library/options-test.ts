@@ -10,4 +10,20 @@ describe('options', () => {
 
 		expect(options).toStrictEqual({})
 	})
+
+	it('should throw an error when header options are used', () => {
+		// @ts-expect-error Types don't allow this, by design.
+		expect(() => slowDown({ standardHeaders: true })).toThrow(/headers/)
+		// @ts-expect-error Ditto.
+		expect(() => slowDown({ legacyHeaders: true })).toThrow(/headers/)
+		// @ts-expect-error Ditto.
+		expect(() => slowDown({ headers: true })).toThrow(/headers/)
+	})
+
+	it('should throw an error when max option is used', () => {
+		// @ts-expect-error Types don't allow this, by design.
+		expect(() => slowDown({ max: 3 })).toThrow(/delayAfter/)
+		// @ts-expect-error Ditto.
+		expect(() => slowDown({ limit: 3 })).toThrow(/delayAfter/)
+	})
 })
