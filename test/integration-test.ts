@@ -277,11 +277,8 @@ describe('integration', () => {
 
 		await request(app).get('/?key=1') // 1st - no delay
 		await request(app).get('/?key=1') // 2nd - 100ms delay
-
 		await request(app).get('/?key=2') // 1st - no delay
-
 		await request(app).get('/?key=1') // 3rd - 100ms delay
-
 		await request(app).get('/?key=2') // 2nd - 100ms delay
 		await request(app).get('/?key=2') // 3rd - 100ms delay
 	})
@@ -334,9 +331,7 @@ describe('integration', () => {
 		).toBeTruthy()
 	})
 
-	// After upgrading super test, this one always fails, because res.finished is set to true, despite the response never actually being sent
-	// skip.test.js has an equivalent test hat doesn't use supertest and passes
-	it.skip('should decrement hits with closed response and skipFailedRequests', (done) => {
+	it('should decrement hits with closed response and skipFailedRequests', async () => {
 		const store = new MockStore()
 		const app = createServer(
 			slowDown({
@@ -346,21 +341,14 @@ describe('integration', () => {
 			}),
 		)
 
-		const checkStoreDecremented = () => {
-			if (store.decrementWasCalled) {
-				done()
-			} else {
-				done(new Error('decrement was not called on the store'))
-			}
-		}
-
-		void request(app)
-			.get('/long_response')
-			.timeout(10)
-			.end(checkStoreDecremented)
+		await request(app).get('/long_response').timeout(10)
+		expect(
+			store.decrementWasCalled,
+			'`decrement` was not called on the store',
+		).toBeTruthy()
 	})
 
-	it('should decrement hits with response emitting error and skipFailedRequests', (done) => {
+	it('should decrement hits with response emitting error and skipFailedRequests', async () => {
 		const store = new MockStore()
 		const app = createServer(
 			slowDown({
@@ -370,12 +358,11 @@ describe('integration', () => {
 			}),
 		)
 
-		void request(app)
-			.get('/crash')
-			.end(() => {
-				if (store.decrementWasCalled) done()
-				else done(new Error('decrement was not called on the store'))
-			})
+		await request(app).get('/crash')
+		expect(
+			store.decrementWasCalled,
+			'`decrement` was not called on the store',
+		).toBeTruthy()
 	})
 
 	it('should not decrement hits with success response and skipFailedRequests', async () => {
@@ -391,8 +378,8 @@ describe('integration', () => {
 		await request(app).get('/')
 		expect(
 			store.decrementWasCalled,
-			'`decrement` was not called on the store',
-		).toBeTruthy()
+			'`decrement` was called on the store',
+		).toBeFalsy()
 	})
 
 	it('should not excute slow down timer in case of req closed during delay', async () => {
@@ -416,5 +403,5 @@ describe('integration', () => {
 		await new Promise((resolve) => setTimeout(resolve, 200))
 	})
 
-	// Todo: it("should not excute slow down timer in case of req closed before delay begins", async () => {
+	// TODO: it('should not excute slow down timer in case req is closed before delay begins')
 })
