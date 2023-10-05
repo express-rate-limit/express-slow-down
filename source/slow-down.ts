@@ -71,6 +71,14 @@ export const slowDown = (
 			'The limit/max option is not supported by express-slow-down, please use delayAfter instead.',
 		)
 
+	// TODO: Remove in v3.
+	if (typeof notUndefinedOptions.delayMs === 'number') {
+		const url = `https://express-rate-limit.github.io/WRN_ESD_DELAYMS/`
+		console.warn(
+			`The behaviour of the 'delayMs' option was changed in express-slow-down v2. See ${url} for more information.`,
+		)
+	}
+
 	// Consolidate the validation options that have been passed by the user, and
 	// apply them later, along with `limit: false`.
 	const validate =
