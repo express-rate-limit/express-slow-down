@@ -2,13 +2,13 @@
   "name": "express-slow-down",
   "version": "1.6.0",
   "description": "Basic IP rate-limiting middleware for Express that slows down responses rather than blocking the user.",
-  "homepage": "https://github.com/express-rate-limit/express-rate-limit",
+  "homepage": "https://github.com/express-rate-limit/express-slow-down",
   "author": {
     "name": "Nathan Friedly",
     "url": "http://nfriedly.com/"
   },
   "license": "MIT",
-  "repository": "https://github.com/express-rate-limit/express-rate-limit",
+  "repository": "https://github.com/express-rate-limit/express-slow-down",
   "keywords": [
     "express-rate-limit",
     "express",
