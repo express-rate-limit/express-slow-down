@@ -1,14 +1,14 @@
-// /test/store-test.ts
+// /test/library/store-test.ts
 // Tests the store with the middleware
 
 import { jest } from '@jest/globals'
-import slowDown from '../source/index.js'
+import slowDown from '../../source/index.js'
 import {
 	MockStore,
 	MockLegacyStore,
 	InvalidStore,
-} from './helpers/mock-stores.js'
-import { expectNoDelay, expectNoDelayPromise } from './helpers/requests.js'
+} from '../helpers/mock-stores.js'
+import { expectNoDelay, expectNoDelayPromise } from '../helpers/requests.js'
 
 describe('store', () => {
 	beforeEach(() => {

@@ -65,8 +65,9 @@
     "format:code": "xo --fix",
     "format:rest": "prettier --write .",
     "format": "run-s format:*",
-    "test:lib": "jest",
-    "test": "run-s lint test:lib",
+    "test:lib": "jest test/library/",
+    "test:int": "jest test/integration/",
+    "test": "run-s lint test:*",
     "pre-commit": "lint-staged",
     "prepare": "run-s compile && husky install config/husky"
   },

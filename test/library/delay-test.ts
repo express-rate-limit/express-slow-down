@@ -1,9 +1,9 @@
-// /test/delay-test.ts
+// /test/library/delay-test.ts
 // Tests the delaying mechanism
 
 import { jest } from '@jest/globals'
-import slowDown from '../source/index.js'
-import { expectDelay, expectNoDelay } from './helpers/requests.js'
+import slowDown from '../../source/index.js'
+import { expectDelay, expectNoDelay } from '../helpers/requests.js'
 
 describe('slowdown', () => {
 	beforeEach(() => {

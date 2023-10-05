@@ -1,4 +1,4 @@
-// /test/integration-test.ts
+// /test/library/integration-test.ts
 // Tests the middleware with a real Express application.
 
 import EventEmitter from 'node:events'
@@ -6,9 +6,9 @@ import EventEmitter from 'node:events'
 import 'jest-expect-message'
 import { type Application } from 'express'
 import { agent as request } from 'supertest'
-import slowDown from '../source/index.js'
-import { MockStore } from './helpers/mock-stores.js'
-import { createServer } from './helpers/server.js'
+import slowDown from '../../source/index.js'
+import { MockStore } from '../helpers/mock-stores.js'
+import { createServer } from '../helpers/server.js'
 
 /**
  * Makes the program wait for the given number of milliseconds.
