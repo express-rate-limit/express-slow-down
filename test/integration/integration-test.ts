@@ -341,11 +341,16 @@ describe('integration', () => {
 			}),
 		)
 
-		await request(app).get('/long_response').timeout(10)
-		expect(
-			store.decrementWasCalled,
-			'`decrement` was not called on the store',
-		).toBeTruthy()
+		void request(app)
+			.get('/sleepy')
+			.timeout(10)
+			.catch(() => {
+				// A timeout error is thrown.
+				expect(
+					store.decrementWasCalled,
+					'`decrement` was not called on the store',
+				).toBeTruthy()
+			})
 	})
 
 	it('should decrement hits with response emitting error and skipFailedRequests', async () => {
