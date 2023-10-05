@@ -333,24 +333,26 @@ describe('integration', () => {
 
 	it('should decrement hits with closed response and skipFailedRequests', async () => {
 		const store = new MockStore()
-		const app = createServer(
-			slowDown({
-				skipFailedRequests: true,
-				store,
-				validate: false,
-			}),
-		)
 
-		void request(app)
-			.get('/sleepy')
-			.timeout(10)
-			.catch(() => {
-				// A timeout error is thrown.
-				expect(
-					store.decrementWasCalled,
-					'`decrement` was not called on the store',
-				).toBeTruthy()
-			})
+		const requestMock = {}
+		const responseMock = new EventEmitter()
+		const nextFn = () => {} // eslint-disable-line @typescript-eslint/no-empty-function
+		const middleware = slowDown({
+			skipFailedRequests: true,
+			store,
+			validate: false,
+		})
+
+		// eslint-disable-next-line @typescript-eslint/await-thenable
+		await middleware(requestMock as any, responseMock as any, nextFn)
+		responseMock.emit('close')
+
+		// eslint-disable-next-line no-promise-executor-return
+		await new Promise((resolve) => setTimeout(resolve, 200))
+		expect(
+			store.decrementWasCalled,
+			'`decrement` was not called on the store',
+		).toBeTruthy()
 	})
 
 	it('should decrement hits with response emitting error and skipFailedRequests', async () => {
@@ -389,20 +391,20 @@ describe('integration', () => {
 
 	it('should not excute slow down timer in case of req closed during delay', async () => {
 		const requestMock = {}
-		const resMock = new EventEmitter()
-		const currentLimiterMiddleWare = slowDown({
+		const responseMock = new EventEmitter()
+		const middleware = slowDown({
 			delayAfter: 0,
 			delayMs: 100,
 			windowMs: 1000,
 			validate: false,
 		})
-		const next = () => {
+		const nextFn = () => {
 			throw new Error('`setTimeout` should not excute!')
 		}
 
 		// eslint-disable-next-line @typescript-eslint/await-thenable
-		await currentLimiterMiddleWare(requestMock as any, resMock as any, next)
-		resMock.emit('close')
+		await middleware(requestMock as any, responseMock as any, nextFn)
+		responseMock.emit('close')
 
 		// eslint-disable-next-line no-promise-executor-return
 		await new Promise((resolve) => setTimeout(resolve, 200))
