@@ -6,7 +6,6 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    fail-fast: false
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
@@ -20,8 +19,8 @@ jobs:
           npm run lint
   test-library:
     name: Test (Library)
-    fail-fast: false
     strategy:
+      fail-fast: false
       matrix:
         node-version: [lts/*, latest]
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -39,8 +38,8 @@ jobs:
           npm run test:lib
   test-integration:
     name: Test (Integration)
-    fail-fast: false
     strategy:
+      fail-fast: false
       matrix:
         node-version: [lts/*, latest]
         os: [ubuntu-latest]
