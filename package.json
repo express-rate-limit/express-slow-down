@@ -31,18 +31,18 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/express-slow-down.d.mts",
-        "default": "./dist/express-slow-down.mjs"
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
       },
       "require": {
-        "types": "./dist/express-slow-down.d.cts",
-        "default": "./dist/express-slow-down.cjs"
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
       }
     }
   },
-  "main": "dist/express-slow-down.cjs",
-  "module": "./dist/express-slow-down.mjs",
-  "types": "./dist/express-slow-down.d.ts",
+  "main": "dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/",
     "tsconfig.json",
@@ -55,9 +55,9 @@
   },
   "scripts": {
     "clean": "del-cli dist/ coverage/ *.log *.tmp *.bak *.tgz",
-    "build:cjs": "esbuild --platform=node --bundle --target=es2022 --format=cjs --outfile=dist/express-slow-down.cjs --footer:js=\"module.exports = slowDown; module.exports.default = slowDown; module.exports.slowDown = slowDown; \" source/express-slow-down.ts",
-    "build:esm": "esbuild --platform=node --bundle --target=es2022 --format=esm --outfile=dist/express-slow-down.mjs source/express-slow-down.ts",
-    "build:types": "dts-bundle-generator --out-file=dist/express-slow-down.d.ts source/express-slow-down.ts && cp dist/express-slow-down.d.ts dist/express-slow-down.d.cts && cp dist/express-slow-down.d.ts dist/express-slow-down.d.mts",
+    "build:cjs": "esbuild --platform=node --bundle --target=es2022 --format=cjs --outfile=dist/index.cjs --footer:js=\"module.exports = slowDown; module.exports.default = slowDown; module.exports.slowDown = slowDown; \" source/index.ts",
+    "build:esm": "esbuild --platform=node --bundle --target=es2022 --format=esm --outfile=dist/index.mjs source/index.ts",
+    "build:types": "dts-bundle-generator --out-file=dist/index.d.ts source/index.ts && cp dist/index.d.ts dist/index.d.cts && cp dist/index.d.ts dist/index.d.mts",
     "compile": "run-s clean build:*",
     "lint:code": "xo",
     "lint:rest": "prettier --check .",
