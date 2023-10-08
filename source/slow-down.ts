@@ -74,9 +74,26 @@ export const slowDown = (
 	// TODO: Remove in v3.
 	if (typeof notUndefinedOptions.delayMs === 'number') {
 		const url = `https://express-rate-limit.github.io/WRN_ESD_DELAYMS/`
-		console.warn(
-			`The behaviour of the 'delayMs' option was changed in express-slow-down v2. See ${url} for more information.`,
-		)
+		const message = `
+			The behaviour of the 'delayMs' option was changed in express-slow-down v2:
+			- For the old behavior, change the delayMs option to:
+
+			  delayMs: (used, req) => {
+				  const delayAfter = req.${
+						notUndefinedOptions.requestPropertyName ?? 'slowDown'
+					}.limit;
+				  return (used - delayAfter) * ${notUndefinedOptions.delayMs};
+			  },
+
+			- For the new behavior, change the delayMs option to:
+
+				delayMs: () => ${notUndefinedOptions.delayMs},
+
+			See ${url} for more information.
+		`.replace(/^(\t){3}/gm, '') // eslint-disable-line unicorn/prefer-string-replace-all
+		const error = new Error(message)
+
+		console.warn(error)
 	}
 
 	// Consolidate the validation options that have been passed by the user, and
