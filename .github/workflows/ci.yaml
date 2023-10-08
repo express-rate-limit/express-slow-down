@@ -60,6 +60,8 @@ jobs:
     needs: [lint, test-library, test-integration]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
@@ -70,6 +72,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Publish package to NPM
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
