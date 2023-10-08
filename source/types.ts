@@ -7,6 +7,7 @@ import type {
 	RateLimitInfo,
 	Options as RateLimitOptions,
 	ValueDeterminingMiddleware,
+	EnabledValidations,
 	RateLimitRequestHandler,
 } from 'express-rate-limit'
 
@@ -29,6 +30,11 @@ export type DelayFn = (
 	request: AugmentedRequest,
 	response: Response,
 ) => number | Promise<number>
+
+/**
+ * Extra validation checks provided by `express-slow-down`.
+ */
+export type ExtendedValidations = EnabledValidations & { delayMs?: boolean }
 
 /**
  * Options present in `express-rate-limit` that this package overrides.
@@ -87,6 +93,12 @@ export type SlowDownOptions = {
 	 * Defaults to infinity.
 	 */
 	maxDelayMs: number | ValueDeterminingMiddleware<number>
+
+	/**
+	 * Allows the developer to turn off the validation check for `delayMs` being a
+	 * function.
+	 */
+	validate: boolean | ExtendedValidations
 }
 
 /**

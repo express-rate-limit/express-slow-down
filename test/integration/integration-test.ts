@@ -336,7 +336,7 @@ describe('integration', () => {
 
 		const requestMock = {}
 		const responseMock = new EventEmitter()
-		const nextFn = () => {} // eslint-disable-line @typescript-eslint/no-empty-function
+		const nextFn = () => {}
 		const middleware = slowDown({
 			skipFailedRequests: true,
 			store,

@@ -4,6 +4,14 @@
 import slowDown from '../../source/index.js'
 
 describe('options', () => {
+	beforeEach(() => {
+		jest.spyOn(console, 'error').mockImplementation(() => {})
+		jest.spyOn(console, 'warn').mockImplementation(() => {})
+	})
+	afterEach(() => {
+		jest.restoreAllMocks()
+	})
+
 	it('should not modify the options object passed', () => {
 		const options = {}
 		slowDown(options)
@@ -25,5 +33,10 @@ describe('options', () => {
 		expect(() => slowDown({ max: 3 })).toThrow(/delayAfter/)
 		// @ts-expect-error Ditto.
 		expect(() => slowDown({ limit: 3 })).toThrow(/delayAfter/)
+	})
+
+	it('should warn about delayMs being a number', () => {
+		slowDown({ delayMs: 100 })
+		expect(console.warn).toBeCalled()
 	})
 })

@@ -19,6 +19,7 @@ describe('middleware behaviour', () => {
 
 	it('should allow delayAfter to be a function', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayAfter: () => 2,
 			delayMs: 99,
 		})
@@ -29,6 +30,7 @@ describe('middleware behaviour', () => {
 
 	it('should allow delayMs to be a function', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 1,
 			delayMs: () => 99,
 		})
@@ -38,6 +40,7 @@ describe('middleware behaviour', () => {
 
 	it('should allow maxDelayMs to be a function', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 1,
 			delayMs: (used: number) => (used - 1) * 100,
 			maxDelayMs: () => 200,
@@ -51,6 +54,7 @@ describe('middleware behaviour', () => {
 	it('should allow a custom key generator', async () => {
 		const keyGenerator = jest.fn() as any
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 1,
 			keyGenerator,
 		})
@@ -65,6 +69,7 @@ describe('middleware behaviour', () => {
 			.mockReturnValueOnce(false)
 			.mockReturnValueOnce(true) as any
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 0,
 			delayMs: 100,
 			skip,
@@ -82,6 +87,7 @@ describe('middleware behaviour', () => {
 		jest.spyOn(res, 'on')
 		const store = new MockStore()
 		const instance = slowDown({
+			validate: false,
 			skipSuccessfulRequests: true,
 			store,
 		})
@@ -99,6 +105,7 @@ describe('middleware behaviour', () => {
 		const res: any = new EventEmitter()
 		const store = new MockStore()
 		const instance = slowDown({
+			validate: false,
 			skipSuccessfulRequests: true,
 			store,
 		})
@@ -115,6 +122,7 @@ describe('middleware behaviour', () => {
 		jest.spyOn(res, 'on')
 		const store = new MockStore()
 		const instance = slowDown({
+			validate: false,
 			skipFailedRequests: true,
 			store,
 		})
@@ -131,6 +139,7 @@ describe('middleware behaviour', () => {
 		const res: any = new EventEmitter()
 		const store = new MockStore()
 		const instance = slowDown({
+			validate: false,
 			skipFailedRequests: true,
 			store,
 		})
@@ -147,6 +156,7 @@ describe('middleware behaviour', () => {
 		const res: any = new EventEmitter()
 		const store = new MockStore()
 		const instance = slowDown({
+			validate: false,
 			skipFailedRequests: true,
 			store,
 		})
@@ -163,6 +173,7 @@ describe('middleware behaviour', () => {
 		const res: any = new EventEmitter()
 		const store = new MockStore()
 		const instance = slowDown({
+			validate: false,
 			skipFailedRequests: true,
 			store,
 		})
@@ -176,6 +187,7 @@ describe('middleware behaviour', () => {
 	it('should augment the req object with info about the slowdown status', async () => {
 		const request: any = {}
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 2,
 			windowMs: 1000,
 		})

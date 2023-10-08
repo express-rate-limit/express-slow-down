@@ -17,6 +17,7 @@ describe('slowdown', () => {
 
 	it('should not delay the first request', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 1,
 		})
 
@@ -25,6 +26,7 @@ describe('slowdown', () => {
 
 	it('should delay the first request', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 0,
 			delayMs: 100,
 		})
@@ -34,6 +36,7 @@ describe('slowdown', () => {
 
 	it('should apply a larger delay to each subsequent request', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 0,
 			delayMs: (used: number) => used * 100,
 		})
@@ -45,6 +48,7 @@ describe('slowdown', () => {
 
 	it('should apply a cap of maxDelayMs on the the delay', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 0,
 			delayMs: (used: number) => used * 100,
 			maxDelayMs: 250,
@@ -60,6 +64,7 @@ describe('slowdown', () => {
 
 	it('should allow delayAfter requests before delaying', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayAfter: 2,
 			delayMs: 300,
 		})
@@ -71,6 +76,7 @@ describe('slowdown', () => {
 
 	it('should (eventually) return to full speed', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayMs: 100,
 			delayAfter: 1,
 			windowMs: 300,
@@ -87,6 +93,7 @@ describe('slowdown', () => {
 
 	it('should work repeatedly (issues #2 & #3)', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayMs: 100,
 			delayAfter: 2,
 			windowMs: 50,

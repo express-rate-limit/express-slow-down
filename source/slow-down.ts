@@ -89,11 +89,19 @@ export const slowDown = (
 
 				delayMs: () => ${notUndefinedOptions.delayMs},
 
-			See ${url} for more information.
+			See ${url} for more information. Set 'options.validate.delayMs: false' to disable this error message.
 		`.replace(/^(\t){3}/gm, '') // eslint-disable-line unicorn/prefer-string-replace-all
 		const error = new Error(message)
 
-		console.warn(error)
+		// Make sure the validation check is not disabled.
+		if (
+			notUndefinedOptions.validate === undefined ||
+			notUndefinedOptions.validate === true ||
+			(typeof notUndefinedOptions.validate === 'object' &&
+				!notUndefinedOptions.validate.delayMs)
+		) {
+			console.warn(error)
+		}
 	}
 
 	// Consolidate the validation options that have been passed by the user, and

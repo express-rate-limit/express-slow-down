@@ -17,6 +17,7 @@ describe('instance-api', () => {
 
 	it('should allow individual IPs to be reset', async () => {
 		const instance = slowDown({
+			validate: false,
 			delayMs: 100,
 			delayAfter: 1,
 			windowMs: 1000,

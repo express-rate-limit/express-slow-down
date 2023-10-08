@@ -24,6 +24,7 @@ describe('store', () => {
 		it('should not allow the use of a store that is not valid', async () => {
 			expect(() => {
 				const instance = slowDown({
+					validate: false,
 					store: new InvalidStore() as any,
 				})
 
@@ -41,6 +42,7 @@ describe('store', () => {
 			expect(store.incrementWasCalled).toBeFalsy()
 
 			const instance = slowDown({
+				validate: false,
 				store,
 			})
 			await expectNoDelay(instance)
@@ -50,6 +52,7 @@ describe('store', () => {
 		it('should call resetKey on the store', function () {
 			const store = new MockLegacyStore()
 			const limiter = slowDown({
+				validate: false,
 				store,
 			})
 
@@ -63,14 +66,20 @@ describe('store', () => {
 			const store = new MockStore()
 			expect(store.incrementWasCalled).toBeFalsy()
 
-			const instance = slowDown({ store })
+			const instance = slowDown({
+				validate: false,
+				store,
+			})
 			await expectNoDelayPromise(instance)
 			expect(store.incrementWasCalled).toBeTruthy()
 		})
 
 		it('should call resetKey on the store', function () {
 			const store = new MockStore()
-			const limiter = slowDown({ store })
+			const limiter = slowDown({
+				validate: false,
+				store,
+			})
 
 			limiter.resetKey('key')
 			expect(store.resetKeyWasCalled).toBeTruthy()
