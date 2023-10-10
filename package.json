@@ -113,7 +113,8 @@
       "@typescript-eslint/consistent-indexed-object-style": [
         "error",
         "index-signature"
-      ]
+      ],
+      "unicorn/prefer-string-replace-all": 0
     },
     "overrides": [
       {

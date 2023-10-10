@@ -37,6 +37,22 @@ const omitUndefinedOptions = (
 	return omittedOptions
 }
 
+// Todo: export then extend express-rate-limit's ValidationError
+class ExpressSlowDownWarning extends Error {
+	name: string
+	code: string
+	help: string
+	constructor(code: string, message: string) {
+		const url = `https://express-rate-limit.github.io/${code}/`
+
+		super(`${message} See ${url} for more information.`)
+
+		this.name = this.constructor.name
+		this.code = code
+		this.help = url
+	}
+}
+
 /**
  * Create an instance of middleware that slows down responses to Express requests.
  *
@@ -72,10 +88,16 @@ export const slowDown = (
 		)
 
 	// TODO: Remove in v3.
-	if (typeof notUndefinedOptions.delayMs === 'number') {
-		const url = `https://express-rate-limit.github.io/WRN_ESD_DELAYMS/`
-		const message = `
-			The behaviour of the 'delayMs' option was changed in express-slow-down v2:
+	if (
+		typeof notUndefinedOptions.delayMs === 'number' &&
+		// Make sure the validation check is not disabled.
+		(notUndefinedOptions.validate === undefined ||
+			notUndefinedOptions.validate === true ||
+			(typeof notUndefinedOptions.validate === 'object' &&
+				!notUndefinedOptions.validate.delayMs))
+	) {
+		const message =
+			`The behaviour of the 'delayMs' option was changed in express-slow-down v2:
 			- For the old behavior, change the delayMs option to:
 
 			  delayMs: (used, req) => {
@@ -89,19 +111,12 @@ export const slowDown = (
 
 				delayMs: () => ${notUndefinedOptions.delayMs},
 
-			See ${url} for more information. Set 'options.validate.delayMs: false' to disable this error message.
-		`.replace(/^(\t){3}/gm, '') // eslint-disable-line unicorn/prefer-string-replace-all
-		const error = new Error(message)
+			Or set 'options.validate: {delayMs: false}' to disable this message.`.replace(
+				/^(\t){3}/gm,
+				'',
+			)
 
-		// Make sure the validation check is not disabled.
-		if (
-			notUndefinedOptions.validate === undefined ||
-			notUndefinedOptions.validate === true ||
-			(typeof notUndefinedOptions.validate === 'object' &&
-				!notUndefinedOptions.validate.delayMs)
-		) {
-			console.warn(error)
-		}
+		console.warn(new ExpressSlowDownWarning('WRN_ESD_DELAYMS', message))
 	}
 
 	// Consolidate the validation options that have been passed by the user, and
