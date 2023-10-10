@@ -37,7 +37,7 @@ const omitUndefinedOptions = (
 	return omittedOptions
 }
 
-// Todo: export then extend express-rate-limit's ValidationError
+// Todo: consider exporting then extending express-rate-limit's ValidationError
 class ExpressSlowDownWarning extends Error {
 	name: string
 	code: string
@@ -87,14 +87,19 @@ export const slowDown = (
 			'The limit/max option is not supported by express-slow-down, please use delayAfter instead.',
 		)
 
+	// Consolidate the validation options that have been passed by the user, and
+	// apply them later, along with `limit: false`.
+	const validate =
+		typeof notUndefinedOptions.validate === 'boolean'
+			? { default: notUndefinedOptions.validate }
+			: notUndefinedOptions.validate ?? { default: true }
+
 	// TODO: Remove in v3.
 	if (
 		typeof notUndefinedOptions.delayMs === 'number' &&
 		// Make sure the validation check is not disabled.
-		(notUndefinedOptions.validate === undefined ||
-			notUndefinedOptions.validate === true ||
-			(typeof notUndefinedOptions.validate === 'object' &&
-				!notUndefinedOptions.validate.delayMs))
+		(validate.delayMs === true ||
+			(validate.delayMs === undefined && validate.default))
 	) {
 		const message =
 			`The behaviour of the 'delayMs' option was changed in express-slow-down v2:
@@ -119,12 +124,9 @@ export const slowDown = (
 		console.warn(new ExpressSlowDownWarning('WRN_ESD_DELAYMS', message))
 	}
 
-	// Consolidate the validation options that have been passed by the user, and
-	// apply them later, along with `limit: false`.
-	const validate =
-		typeof notUndefinedOptions.validate === 'boolean'
-			? { default: notUndefinedOptions.validate }
-			: notUndefinedOptions.validate
+	// Express-rate-limit will warn about enbling or disabling unknown validations,
+	// so delete the delayMs flag (if set)
+	delete validate?.delayMs
 
 	// See ./types.ts#Options for a detailed description of the options and their
 	// defaults.

@@ -39,4 +39,16 @@ describe('options', () => {
 		slowDown({ delayMs: 100 })
 		expect(console.warn).toBeCalled()
 	})
+
+	it('should not warn about delayMs being a number if validate is false', () => {
+		slowDown({ delayMs: 100, validate: false })
+		expect(console.warn).not.toBeCalled()
+		expect(console.error).not.toBeCalled()
+	})
+
+	it('should not warn about delayMs being a number if validate.delayMs is false', () => {
+		slowDown({ delayMs: 100, validate: { delayMs: false } })
+		expect(console.warn).not.toBeCalled()
+		expect(console.error).not.toBeCalled()
+	})
 })
