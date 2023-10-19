@@ -207,7 +207,9 @@ const limiter = slowDown({
 The absolute maximum value for `delayMs`. After many consecutive attempts, the
 delay will always be this value. This option should be used especially when your
 application is running behind a load balancer or reverse proxy that has a
-request timeout.
+request timeout. Can be the number itself (in milliseconds) or a (sync/async)
+function that accepts the Express `req` and `res` objects and then returns a
+number.
 
 Defaults to `Infinity`.
 
@@ -218,7 +220,7 @@ const limiter = slowDown({
 	// ...
 	delayAfter: 1,
 	delayMs: (hits) => hits * 1000,
-	maxDelayMs: 4_000,
+	maxDelayMs: 4000,
 })
 ```
 
