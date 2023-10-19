@@ -5,4 +5,4 @@
 export * from './types.js'
 
 // Export the `slowDown` function as well.
-export { default, default as slowDown } from './slow-down.js'
+export * from './slow-down.js'

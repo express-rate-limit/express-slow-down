@@ -20,21 +20,21 @@ import type {
  *
  * @private
  */
-const omitUndefinedOptions = (
+const filterUndefinedOptions = (
 	passedOptions: Partial<Options>,
 ): Partial<Options> => {
-	const omittedOptions: Partial<Options> = {}
+	const filteredOptions: Partial<Options> = {}
 
 	for (const k of Object.keys(passedOptions)) {
 		const key = k as keyof Options
 
 		if (passedOptions[key] !== undefined) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			omittedOptions[key] = passedOptions[key]
+			filteredOptions[key] = passedOptions[key]
 		}
 	}
 
-	return omittedOptions
+	return filteredOptions
 }
 
 // Todo: consider exporting then extending express-rate-limit's ValidationError
@@ -68,7 +68,7 @@ export const slowDown = (
 	// Passing undefined should be equivalent to not passing an option at all, so we'll
 	// omit all fields where their value is undefined.
 	const notUndefinedOptions: Partial<Options> =
-		omitUndefinedOptions(passedOptions)
+		filterUndefinedOptions(passedOptions)
 
 	if (
 		notUndefinedOptions.headers ||
