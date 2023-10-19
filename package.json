@@ -75,7 +75,7 @@
     "express": ">= 4"
   },
   "dependencies": {
-    "express-rate-limit": "7.0.1"
+    "express-rate-limit": "7"
   },
   "devDependencies": {
     "@express-rate-limit/prettier": "1.1.1",
