@@ -8,7 +8,10 @@
     "url": "http://nfriedly.com/"
   },
   "license": "MIT",
-  "repository": "https://github.com/express-rate-limit/express-slow-down",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/express-rate-limit/express-slow-down.git"
+  },
   "keywords": [
     "express-rate-limit",
     "express",
