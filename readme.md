@@ -22,7 +22,7 @@ servers. It's sufficient for basic abuse prevention, but an external store will
 provide more consistency.
 
 express-slow-down uses
-[express-rate-limit's stores](https://github.com/express-rate-limit/express-rate-limit#store)
+[express-rate-limit's stores](https://express-rate-limit.mintlify.app/reference/configuration#store)
 
 > **Note**: when using express-slow-down and express-rate-limit with an external
 > store, you'll need to create two instances of the store and provide different
@@ -144,7 +144,7 @@ app.use(speedLimiter)
 
 ## Configuration
 
-### [`windowMs`](https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md#windowms)
+### [`windowMs`](https://express-rate-limit.mintlify.app/reference/configuration#windowms)
 
 > `number`
 
@@ -234,20 +234,20 @@ Because
 [`express-rate-limit`](https://github.com/express-rate-limit/express-rate-limit)
 is used internally, additional options that it supports may be passed in. Some
 of them are listed below; see `express-rate-limit`'s
-[readme](https://github.com/express-rate-limit/express-rate-limit#configuration)
+[documentation](https://express-rate-limit.mintlify.app/reference/configuration)
 for the complete list.
 
 > **Note**: The `limit` (`max`) option is not supported (use `delayAfter`
 > instead), nor are `handler` or the various headers options.
 
-- [`requestPropertyName`](https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md#requestpropertyname)
-- [`skipFailedRequests`](https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md#skipfailedrequests)
-- [`skipSuccessfulRequests`](https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md#skipsuccessfulrequests)
-- [`keyGenerator`](https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md#keygenerator)
-- [`skip`](https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md#skip)
-- [`requestWasSuccessful`](https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md#requestwassuccessful)
-- [`validate`](https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md#validate)
-- [`store`](https://github.com/express-rate-limit/express-rate-limit#store)
+- [`requestPropertyName`](https://express-rate-limit.mintlify.app/reference/configuration#requestpropertyname)
+- [`skipFailedRequests`](https://express-rate-limit.mintlify.app/reference/configuration#skipfailedrequests)
+- [`skipSuccessfulRequests`](https://express-rate-limit.mintlify.app/reference/configuration#skipsuccessfulrequests)
+- [`keyGenerator`](https://express-rate-limit.mintlify.app/reference/configuration#keygenerator)
+- [`skip`](https://express-rate-limit.mintlify.app/reference/configuration#skip)
+- [`requestWasSuccessful`](https://express-rate-limit.mintlify.app/reference/configuration#requestwassuccessful)
+- [`validate`](https://express-rate-limit.mintlify.app/reference/configuration#validate)
+- [`store`](https://express-rate-limit.mintlify.app/reference/configuration#store)
 
 ## Request API
 
