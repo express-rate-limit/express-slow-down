@@ -4,8 +4,8 @@
 
 ### Fixed
 
-- express-rate-limit's `WRN_ERL_MAX_ZERO` warning is not correctly suppressed
-  even when supplying a custom validations object in the config.
+- Fixed an incorrect `WRN_ERL_MAX_ZERO` warning when supplying a custom
+  validation object in the config.
 
 ## v2.0.0
 
