@@ -1,5 +1,12 @@
 # express-slow-down changelog
 
+## v2.0.1
+
+### Fixed
+
+- Fixed an incorrect `WRN_ERL_MAX_ZERO` warning when supplying a custom
+  validation object in the config.
+
 ## v2.0.0
 
 express-slow-down v2 is built on top of express-rate-limit v7.
