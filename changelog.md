@@ -1,5 +1,12 @@
 # express-slow-down changelog
 
+## v2.0.1
+
+### Fixed
+
+- express-rate-limit's `WRN_ERL_MAX_ZERO` warning is not correctly suppressed
+  even when supplying a custom validations object in the config.
+
 ## v2.0.0
 
 express-slow-down v2 is built on top of express-rate-limit v7.

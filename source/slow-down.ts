@@ -139,13 +139,15 @@ export const slowDown = (
 		},
 		maxDelayMs: Number.POSITIVE_INFINITY,
 		requestPropertyName: 'slowDown',
+
+		// Next the user's options are pulled in, overriding defaults from above
+		...notUndefinedOptions,
+
+		// This is a combination of the user's validate settings and our own overrides
 		validate: {
 			...validate,
 			limit: false, // We know the behavor of limit=0 changed - we depend on the new behavior!
 		},
-
-		// The following options are passed directly to `express-rate-limit`.
-		...notUndefinedOptions,
 
 		// These settings cannot be overriden.
 		limit: 0, // We want the handler to run on every request.

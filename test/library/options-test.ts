@@ -2,6 +2,7 @@
 // Tests the parsing/handling of options passed in by the user
 
 import slowDown from '../../source/index.js'
+import { expectNoDelay } from '../helpers/requests.js'
 
 describe('options', () => {
 	beforeEach(() => {
@@ -48,6 +49,18 @@ describe('options', () => {
 
 	it('should not warn about delayMs being a number if validate.delayMs is false', () => {
 		slowDown({ delayMs: 100, validate: { delayMs: false } })
+		expect(console.warn).not.toBeCalled()
+		expect(console.error).not.toBeCalled()
+	})
+
+	it('should not warn about max being zero when validate.delayMs is false', async () => {
+		jest.spyOn(global, 'setTimeout')
+		const instance = slowDown({
+			delayAfter: 1,
+			delayMs: 100,
+			validate: { delayMs: false },
+		})
+		await expectNoDelay(instance)
 		expect(console.warn).not.toBeCalled()
 		expect(console.error).not.toBeCalled()
 	})
