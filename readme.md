@@ -64,7 +64,7 @@ Import it in a CommonJS project (`type: commonjs` or no `type` field in
 `package.json`) as follows:
 
 ```ts
-const { slowDown } = require('express-rate-limit')
+const { slowDown } = require('express-slow-down')
 ```
 
 Import it in a ESM project (`type: module` in `package.json`) as follows:
