@@ -75,7 +75,7 @@
     "prepare": "run-s compile && husky install config/husky"
   },
   "peerDependencies": {
-    "express": ">= 4"
+    "express": "^4.0.0 || ^5.0.0"
   },
   "dependencies": {
     "express-rate-limit": "7"
