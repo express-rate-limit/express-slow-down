@@ -1,5 +1,11 @@
 # express-slow-down changelog
 
+## v2.0.2
+
+### Fixed
+
+- Allowed `express-slow-down` to be used with `express` v5.
+
 ## v2.0.1
 
 ### Fixed
