@@ -1,5 +1,11 @@
 # express-slow-down changelog
 
+## v2.0.3
+
+### Fixed
+
+- Fixed `peerDependencies` compatibility with express 5 beta.
+
 ## v2.0.2
 
 ### Fixed
