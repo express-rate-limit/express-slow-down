@@ -22,7 +22,7 @@ servers. It's sufficient for basic abuse prevention, but an external store will
 provide more consistency.
 
 express-slow-down uses
-[express-rate-limit's stores](https://express-rate-limit.mintlify.app/reference/configuration#store)
+[express-rate-limit's stores](https://express-rate-limit.mintlify.app/reference/stores)
 
 > **Note**: when using express-slow-down and express-rate-limit with an external
 > store, you'll need to create two instances of the store and provide different
