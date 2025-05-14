@@ -1,5 +1,11 @@
 # express-slow-down changelog
 
+## v2.1.0
+
+- Changed distributed JS to no longer bundle in `express-rate-limit`, instead
+  using the version installed via npm. This enables several new
+  express-rate-limit features that have been released since v7.0.1.
+
 ## v2.0.3
 
 ### Fixed
