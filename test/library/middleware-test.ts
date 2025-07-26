@@ -2,6 +2,7 @@
 // Tests the middleware by passing in various options to it
 
 import EventEmitter from 'node:events'
+import process from 'node:process'
 import { jest } from '@jest/globals'
 import slowDown from '../../source/index.js'
 import { expectDelay, expectNoDelay } from '../helpers/requests.js'
@@ -97,7 +98,9 @@ describe('middleware behaviour', () => {
 
 		res.statusCode = 200
 		res.emit('finish')
-		expect(store.decrementWasCalled).toBeTruthy()
+		process.nextTick(() => {
+			expect(store.decrementWasCalled).toBeTruthy()
+		})
 	})
 
 	it('should not decrement hits with error response and skipSuccessfulRequests', async () => {
@@ -148,7 +151,9 @@ describe('middleware behaviour', () => {
 
 		res.statusCode = 400
 		res.emit('finish')
-		expect(store.decrementWasCalled).toBeTruthy()
+		process.nextTick(() => {
+			expect(store.decrementWasCalled).toBeTruthy()
+		})
 	})
 
 	it('should decrement hits with closed unfinished response and skipFailedRequests', async () => {
