@@ -244,6 +244,7 @@ for the complete list.
 - [`skipFailedRequests`](https://express-rate-limit.mintlify.app/reference/configuration#skipfailedrequests)
 - [`skipSuccessfulRequests`](https://express-rate-limit.mintlify.app/reference/configuration#skipsuccessfulrequests)
 - [`keyGenerator`](https://express-rate-limit.mintlify.app/reference/configuration#keygenerator)
+- [`ipv6Subnet`](https://express-rate-limit.mintlify.app/reference/configuration#ipv6subnet)
 - [`skip`](https://express-rate-limit.mintlify.app/reference/configuration#skip)
 - [`requestWasSuccessful`](https://express-rate-limit.mintlify.app/reference/configuration#requestwassuccessful)
 - [`validate`](https://express-rate-limit.mintlify.app/reference/configuration#validate)
