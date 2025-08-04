@@ -1,6 +1,15 @@
 # express-slow-down changelog
 
+## v3.0.0
+
+### Added
+
+- Added support for grouping IPv6 addresses by subnet (defaults to /56) via
+  upgrading express-rate-limit dependency to 8.x
+
 ## v2.1.0
+
+### Fixed
 
 - Changed distributed JS to no longer bundle in `express-rate-limit`, instead
   using the version installed via npm. This enables several new
