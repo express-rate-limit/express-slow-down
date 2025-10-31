@@ -124,7 +124,7 @@ export const slowDown = (
 		console.warn(new ExpressSlowDownWarning('WRN_ESD_DELAYMS', message))
 	}
 
-	// Express-rate-limit will warn about enbling or disabling unknown validations,
+	// Express-rate-limit will warn about enabling or disabling unknown validations,
 	// so delete the delayMs flag (if set)
 	delete validate?.delayMs
 
@@ -146,15 +146,15 @@ export const slowDown = (
 		// This is a combination of the user's validate settings and our own overrides
 		validate: {
 			...validate,
-			limit: false, // We know the behavor of limit=0 changed - we depend on the new behavior!
+			limit: false, // We know the behavior of limit=0 changed - we depend on the new behavior!
 		},
 
-		// These settings cannot be overriden.
+		// These settings cannot be overridden.
 		limit: 0, // We want the handler to run on every request.
 		// Disable the headers, we don't want to send them.
 		legacyHeaders: false,
 		standardHeaders: false,
-		// The handler contains the slow-down logic, so don't allow it to be overriden.
+		// The handler contains the slow-down logic, so don't allow it to be overridden.
 		async handler(_request: Request, response: Response, next: NextFunction) {
 			// Get the number of requests after which we should speed-limit the client.
 			const delayAfter =
