@@ -196,8 +196,11 @@ export const slowDown = (
 		},
 	}
 
+	// Express-rate-limit will also warn about unexpected options, so use destructuring to create an object without the ESD options
+	const { delayAfter, delayMs, maxDelayMs, ...erlOptions } = options
+
 	// Create and return the special rate limiter.
-	return rateLimit(options)
+	return rateLimit(erlOptions)
 }
 
 // Export it to the world!
