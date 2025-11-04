@@ -39,7 +39,7 @@ export type ExtendedValidations = EnabledValidations & { delayMs?: boolean }
 /**
  * Options present in `express-rate-limit` that this package overrides.
  */
-export type OverridenOptions = {
+export type OverriddenOptions = {
 	/**
 	 * The header options are not supported, and using them will throw an error.
 	 */
@@ -54,11 +54,14 @@ export type OverridenOptions = {
 	max: never
 
 	/**
-	 * The `handler` option is overriden by the library.
+	 * The `handler` option is overridden by the library.
 	 */
 	handler: never
 }
 
+// Backwards compatibility because we shipped this with a typo.
+// may be removed in a future semver major release.
+export type OverridenOptions = OverriddenOptions
 /**
  * All the `express-slow-down` specific options.
  */
@@ -104,7 +107,7 @@ export type SlowDownOptions = {
 /**
  * The configuration options for the middleware.
  */
-export type Options = RateLimitOptions & OverridenOptions & SlowDownOptions
+export type Options = RateLimitOptions & OverriddenOptions & SlowDownOptions
 
 /**
  * The extended request object that includes information about the client's
