@@ -102,6 +102,8 @@ export type SlowDownOptions = {
 	 * function.
 	 */
 	validate: boolean | ExtendedValidations
+
+	// REMINDER: any new options for ESD need to be omitted from the object before passing it to ERL to avoid validation warnings
 }
 
 /**
