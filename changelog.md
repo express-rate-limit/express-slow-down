@@ -1,5 +1,12 @@
 # express-slow-down changelog
 
+## v3.0.1
+
+### Fixed
+
+- Only pass supported options to express-rate-limit to avoid triggering warning
+  added for unexpected options in ERL v8.2.0
+
 ## v3.0.0
 
 ### Added
