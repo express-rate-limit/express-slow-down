@@ -389,7 +389,7 @@ describe('integration', () => {
 		).toBeFalsy()
 	})
 
-	it('should not excute slow down timer in case of req closed during delay', async () => {
+	it('should not execute slow down timer in case of req closed during delay', async () => {
 		const requestMock = {}
 		const responseMock = new EventEmitter()
 		const middleware = slowDown({
@@ -399,7 +399,7 @@ describe('integration', () => {
 			validate: false,
 		})
 		const nextFn = () => {
-			throw new Error('`setTimeout` should not excute!')
+			throw new Error('`setTimeout` should not execute!')
 		}
 
 		// eslint-disable-next-line @typescript-eslint/await-thenable
@@ -410,5 +410,52 @@ describe('integration', () => {
 		await new Promise((resolve) => setTimeout(resolve, 200))
 	})
 
-	// TODO: it('should not excute slow down timer in case req is closed before delay begins')
+	it('should properly handle connection close events and clean up timers', async () => {
+		jest.useFakeTimers()
+		jest.spyOn(global, 'setTimeout')
+		jest.spyOn(global, 'clearTimeout')
+
+		const requestMock = new EventEmitter() as any
+		const responseMock = new EventEmitter() as any
+
+		// Set up the request to match what express-rate-limit expects
+		requestMock.ip = '127.0.0.1'
+		requestMock.app = {
+			get: () => false,
+		}
+		requestMock.headers = []
+
+		const middleware = slowDown({
+			delayAfter: 0, // Every request should be delayed
+			delayMs: 200, // 200ms delay
+			windowMs: 1000,
+			validate: false,
+		})
+
+		let nextCalled = false
+		const nextFn = () => {
+			nextCalled = true
+		}
+
+		// Start the middleware
+		// eslint-disable-next-line @typescript-eslint/await-thenable
+		await middleware(requestMock, responseMock, nextFn)
+
+		// At this point, setTimeout should have been called to set up the delay
+		expect(setTimeout).toHaveBeenCalled()
+		expect(nextCalled).toBe(false) // Should not have been called yet		// Now simulate connection close
+		responseMock.emit('close')
+
+		// ClearTimeout should be called when connection closes
+		expect(clearTimeout).toHaveBeenCalled()
+
+		// Advance time past the delay
+		jest.advanceTimersByTime(300)
+
+		// Next() should not have been called because timer was cleared
+		expect(nextCalled).toBe(false)
+
+		jest.useRealTimers()
+		jest.restoreAllMocks()
+	})
 })

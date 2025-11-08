@@ -37,7 +37,7 @@ const filterUndefinedOptions = (
 	return filteredOptions
 }
 
-// Todo: consider exporting then extending express-rate-limit's ValidationError
+// Consider exporting then extending express-rate-limit's ValidationError
 class ExpressSlowDownWarning extends Error {
 	name: string
 	code: string
@@ -94,7 +94,7 @@ export const slowDown = (
 			? { default: notUndefinedOptions.validate }
 			: notUndefinedOptions.validate ?? { default: true }
 
-	// TODO: Remove in v3.
+	// Deprecation warning for delayMs behavior change from v2
 	if (
 		typeof notUndefinedOptions.delayMs === 'number' &&
 		// Make sure the validation check is not disabled.

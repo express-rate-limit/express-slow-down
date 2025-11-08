@@ -15,7 +15,7 @@ describe('connection', () => {
 		jest.restoreAllMocks()
 	})
 
-	it('should not excute slow down timer in case of req closed', async () => {
+	it('should not execute slow down timer in case of req closed', async () => {
 		const request = new EventEmitter() as any
 		const res = new EventEmitter() as any
 
