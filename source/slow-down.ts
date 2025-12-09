@@ -70,11 +70,6 @@ export const slowDown = (
 	const notUndefinedOptions: Partial<Options> =
 		filterUndefinedOptions(passedOptions)
 
-	if ( notUndefinedOptions.headers )
-		throw new Error(
-			'The headers options were removed in express-slow-down v2.0.0.',
-		)
-
 	if (
 		notUndefinedOptions.max !== undefined ||
 		notUndefinedOptions.limit !== undefined
@@ -102,8 +97,9 @@ export const slowDown = (
 			- For the old behavior, change the delayMs option to:
 
 			  delayMs: (used, req) => {
-				  const delayAfter = req.${notUndefinedOptions.requestPropertyName ?? 'slowDown'
-				}.limit;
+				  const delayAfter = req.${
+						notUndefinedOptions.requestPropertyName ?? 'slowDown'
+					}.limit;
 				  return (used - delayAfter) * ${notUndefinedOptions.delayMs};
 			  },
 
@@ -112,9 +108,9 @@ export const slowDown = (
 				delayMs: () => ${notUndefinedOptions.delayMs},
 
 			Or set 'options.validate: {delayMs: false}' to disable this message.`.replace(
-					/^(\t){3}/gm,
-					'',
-				)
+				/^(\t){3}/gm,
+				'',
+			)
 
 		console.warn(new ExpressSlowDownWarning('WRN_ESD_DELAYMS', message))
 	}
@@ -134,6 +130,9 @@ export const slowDown = (
 		},
 		maxDelayMs: Number.POSITIVE_INFINITY,
 		requestPropertyName: 'slowDown',
+
+		legacyHeaders: false,
+		standardHeaders: false,
 
 		// Next the user's options are pulled in, overriding defaults from above
 		...notUndefinedOptions,
@@ -175,28 +174,6 @@ export const slowDown = (
 
 				// Make sure the computed delay does not exceed the max delay.
 				delay = Math.max(0, Math.min(unboundedDelay, maxDelayMs))
-			}
-
-			//Add one of the headers if needed
-			if (options.legacyHeaders) {
-				response.setHeader('X-RateLimit-Limit', info.limit.toString())
-				response.setHeader('X-RateLimit-Remaining', info.remaining.toString())
-				if (info.resetTime instanceof Date) {
-					response.setHeader('Date', new Date().toUTCString())
-					response.setHeader(
-						'X-RateLimit-Reset',
-						Math.ceil(info.resetTime.getTime() / 1000).toString(),
-					)
-				}
-			} else if (options.standardHeaders) {
-				response.setHeader('RateLimit-Limit', `${info.limit};w=${options.windowMs}`)
-				response.setHeader('RateLimit-Remaining', info.remaining.toString())
-				if (info.resetTime instanceof Date) {
-					response.setHeader(
-						'RateLimit-Reset',
-						Math.floor((info.resetTime.getTime() - new Date().getTime()) / 1000)
-					)
-				}
 			}
 
 			// Make sure the delay is also passed on with the request.
