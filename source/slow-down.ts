@@ -71,15 +71,6 @@ export const slowDown = (
 		filterUndefinedOptions(passedOptions)
 
 	if (
-		notUndefinedOptions.headers ||
-		notUndefinedOptions.legacyHeaders ||
-		notUndefinedOptions.standardHeaders
-	)
-		throw new Error(
-			'The headers options were removed in express-slow-down v2.0.0.',
-		)
-
-	if (
 		notUndefinedOptions.max !== undefined ||
 		notUndefinedOptions.limit !== undefined
 	)
@@ -140,6 +131,9 @@ export const slowDown = (
 		maxDelayMs: Number.POSITIVE_INFINITY,
 		requestPropertyName: 'slowDown',
 
+		legacyHeaders: false,
+		standardHeaders: false,
+
 		// Next the user's options are pulled in, overriding defaults from above
 		...notUndefinedOptions,
 
@@ -152,8 +146,6 @@ export const slowDown = (
 		// These settings cannot be overridden.
 		limit: 0, // We want the handler to run on every request.
 		// Disable the headers, we don't want to send them.
-		legacyHeaders: false,
-		standardHeaders: false,
 		// The handler contains the slow-down logic, so don't allow it to be overridden.
 		async handler(_request: Request, response: Response, next: NextFunction) {
 			// Get the number of requests after which we should speed-limit the client.
