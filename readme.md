@@ -238,8 +238,10 @@ of them are listed below; see `express-rate-limit`'s
 for the complete list.
 
 > **Note**: The `limit` (`max`) option is not supported (use `delayAfter`
-> instead), nor are `handler` or the various headers options.
+> instead), nor is the `handler` option.
 
+- [`standardHeaders`](https://express-rate-limit.mintlify.app/reference/configuration#standardheaders)
+- [`legacyHeaders`](https://express-rate-limit.mintlify.app/reference/configuration#legacyheaders)
 - [`requestPropertyName`](https://express-rate-limit.mintlify.app/reference/configuration#requestpropertyname)
 - [`skipFailedRequests`](https://express-rate-limit.mintlify.app/reference/configuration#skipfailedrequests)
 - [`skipSuccessfulRequests`](https://express-rate-limit.mintlify.app/reference/configuration#skipsuccessfulrequests)

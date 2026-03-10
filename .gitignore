@@ -12,3 +12,4 @@ coverage/
 *.tmp
 *.bak
 *.tgz
+.ripple-cache/
