@@ -33,10 +33,29 @@ export const expectNoDelay = async (
 	const next = jest.fn()
 	impersonateRequest(request)
 
+	// Add headers object to response if not present
+	if (!response.headers) {
+		response.headers = {}
+	}
+
+	// Mock setHeader to capture headers
+	if (!response.setHeader) {
+		response.setHeader = (name: string, value: string) => {
+			response.headers[name.toLowerCase()] = value
+		}
+	}
+
+	// Mock getHeader
+	if (!response.getHeader) {
+		response.getHeader = (name: string) => response.headers[name.toLowerCase()]
+	}
+
 	await instance(request as Request, response as Response, next as NextFunction)
 
 	expect(setTimeout).not.toHaveBeenCalled()
 	expect(next).toHaveBeenCalled()
+
+	return response
 }
 
 /**

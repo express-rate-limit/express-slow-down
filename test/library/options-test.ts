@@ -20,13 +20,42 @@ describe('options', () => {
 		expect(options).toStrictEqual({})
 	})
 
-	it('should throw an error when header options are used', () => {
-		// @ts-expect-error Types don't allow this, by design.
-		expect(() => slowDown({ standardHeaders: true })).toThrow(/headers/)
-		// @ts-expect-error Ditto.
-		expect(() => slowDown({ legacyHeaders: true })).toThrow(/headers/)
-		// @ts-expect-error Ditto.
-		expect(() => slowDown({ headers: true })).toThrow(/headers/)
+	it('should allow header options to be enabled', () => {
+		expect(() => slowDown({ standardHeaders: true })).not.toThrow()
+		expect(() => slowDown({ legacyHeaders: true })).not.toThrow()
+		expect(() =>
+			slowDown({ standardHeaders: 'draft-6', legacyHeaders: true }),
+		).not.toThrow()
+	})
+
+	it('should have headers disabled by default', async () => {
+		jest.spyOn(global, 'setTimeout')
+		const instance = slowDown({ delayAfter: 1, validate: false })
+		const response = await expectNoDelay(instance)
+		expect(response.headers['x-ratelimit-limit']).toBeUndefined()
+		expect(response.headers['ratelimit-limit']).toBeUndefined()
+	})
+
+	it('should send standard headers when standardHeaders is enabled', async () => {
+		jest.spyOn(global, 'setTimeout')
+		const instance = slowDown({
+			delayAfter: 5,
+			standardHeaders: 'draft-6',
+			validate: false,
+		})
+		const response = await expectNoDelay(instance)
+		expect(response.headers['ratelimit-limit']).toBeDefined()
+	})
+
+	it('should send legacy headers when legacyHeaders is enabled', async () => {
+		jest.spyOn(global, 'setTimeout')
+		const instance = slowDown({
+			delayAfter: 5,
+			legacyHeaders: true,
+			validate: false,
+		})
+		const response = await expectNoDelay(instance)
+		expect(response.headers['x-ratelimit-limit']).toBeDefined()
 	})
 
 	it('should throw an error when max option is used', () => {

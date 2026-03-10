@@ -41,13 +41,6 @@ export type ExtendedValidations = EnabledValidations & { delayMs?: boolean }
  */
 export type OverriddenOptions = {
 	/**
-	 * The header options are not supported, and using them will throw an error.
-	 */
-	headers?: false
-	legacyHeaders?: false
-	standardHeaders?: false
-
-	/**
 	 * The `limit` option is set from the handler using `delayAfter`.
 	 */
 	limit: never
