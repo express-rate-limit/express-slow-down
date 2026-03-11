@@ -464,7 +464,7 @@ describe('integration', () => {
 			slowDown({
 				delayMs: 100,
 				delayAfter: 2,
-				standardHeaders: true,
+				standardHeaders: 'draft-6',
 				validate: false,
 			}),
 		)
@@ -501,7 +501,8 @@ describe('integration', () => {
 		)
 
 		const response = await request(app).get('/').expect(200)
-		expect(response.headers['ratelimit-limit']).toBeUndefined()
+		expect(response.headers['ratelimit-limit']).toBeUndefined() // standard headers, draft 6 and older
+		expect(response.headers['ratelimit']).toBeUndefined() // standard headers, draft 7+
 		expect(response.headers['x-ratelimit-limit']).toBeUndefined()
 	})
 })
