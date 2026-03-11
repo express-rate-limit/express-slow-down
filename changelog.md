@@ -1,5 +1,12 @@
 # express-slow-down changelog
 
+## v3.1.0
+
+### Added
+
+- `legacyHeaders` and `standardHeaders` options can now be passed through to
+  express-rate-limit
+
 ## v3.0.1
 
 ### Fixed
