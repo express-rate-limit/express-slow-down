@@ -458,4 +458,51 @@ describe('integration', () => {
 		jest.useRealTimers()
 		jest.restoreAllMocks()
 	})
+
+	it('should support standard headers when enabled', async () => {
+		const app = createServer(
+			slowDown({
+				delayMs: 100,
+				delayAfter: 2,
+				standardHeaders: 'draft-6',
+				validate: false,
+			}),
+		)
+
+		const response = await request(app).get('/').expect(200)
+		expect(response.headers['ratelimit-limit']).toBeDefined()
+		expect(response.headers['ratelimit-remaining']).toBeDefined()
+		expect(response.headers['ratelimit-reset']).toBeDefined()
+	})
+
+	it('should support legacy headers when enabled', async () => {
+		const app = createServer(
+			slowDown({
+				delayMs: 100,
+				delayAfter: 2,
+				legacyHeaders: true,
+				validate: false,
+			}),
+		)
+
+		const response = await request(app).get('/').expect(200)
+		expect(response.headers['x-ratelimit-limit']).toBeDefined()
+		expect(response.headers['x-ratelimit-remaining']).toBeDefined()
+		expect(response.headers['x-ratelimit-reset']).toBeDefined()
+	})
+
+	it('should not send headers by default', async () => {
+		const app = createServer(
+			slowDown({
+				delayMs: 100,
+				delayAfter: 2,
+				validate: false,
+			}),
+		)
+
+		const response = await request(app).get('/').expect(200)
+		expect(response.headers['ratelimit-limit']).toBeUndefined() // Standard headers, draft 6 and older
+		expect(response.headers.ratelimit).toBeUndefined() // Standard headers, draft 7+
+		expect(response.headers['x-ratelimit-limit']).toBeUndefined()
+	})
 })
