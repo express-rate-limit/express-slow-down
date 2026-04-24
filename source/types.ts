@@ -96,6 +96,14 @@ export type SlowDownOptions = {
 	 */
 	validate: boolean | ExtendedValidations
 
+	/**
+	 * When set to true, the middleware will log information about the rate limit
+	 * and delay to the console.
+	 *
+	 * Defaults to false.
+	 */
+	debug: boolean
+
 	// REMINDER: any new options for ESD need to be omitted from the object before passing it to ERL to avoid validation warnings
 }
 

@@ -124,6 +124,7 @@ export const slowDown = (
 	const options: Partial<RateLimitOptions> & SlowDownOptions = {
 		// The following settings are defaults that may be overridden by the user's options.
 		delayAfter: 1,
+		debug: false,
 		delayMs(used: number, request: AugmentedRequest, response: Response) {
 			const delayAfter = request[options.requestPropertyName!].limit
 			return (used - delayAfter) * 1000
@@ -178,6 +179,12 @@ export const slowDown = (
 			// Make sure the delay is also passed on with the request.
 			request[options.requestPropertyName!].delay = delay
 
+			if (options.debug) {
+				console.log(
+					`express-slow-down: request from ${_request.ip} | used: ${info.used} | limit: ${delayAfter} | delay: ${delay}ms`,
+				)
+			}
+
 			// If we don't need to delay the request, send it on its way.
 			if (delay <= 0) return next()
 
@@ -188,7 +195,7 @@ export const slowDown = (
 	}
 
 	// Express-rate-limit will also warn about unexpected options, so use destructuring to create an object without the ESD options
-	const { delayAfter, delayMs, maxDelayMs, ...erlOptions } = options
+	const { delayAfter, delayMs, maxDelayMs, debug, ...erlOptions } = options
 
 	// Create and return the special rate limiter.
 	return rateLimit(erlOptions)
