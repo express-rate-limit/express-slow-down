@@ -3,7 +3,7 @@
 
 import EventEmitter from 'node:events'
 import process from 'node:process'
-import { jest } from '@jest/globals'
+import { jest, expect, it, beforeEach, afterEach } from '@jest/globals'
 import slowDown from '../../source/index.js'
 import { expectDelay, expectNoDelay } from '../helpers/requests.js'
 import { MockStore } from '../helpers/mock-stores.js'
@@ -168,8 +168,8 @@ describe('middleware behaviour', () => {
 		await expectNoDelay(instance, request, res)
 		expect(store.decrementWasCalled).toBeFalsy()
 
-		res.finished = false
 		res.emit('close')
+		await Promise.resolve()
 		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
@@ -186,6 +186,7 @@ describe('middleware behaviour', () => {
 		expect(store.decrementWasCalled).toBeFalsy()
 
 		res.emit('error')
+		await Promise.resolve()
 		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
