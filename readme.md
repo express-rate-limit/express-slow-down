@@ -211,7 +211,10 @@ request timeout. Can be the number itself (in milliseconds) or a (sync/async)
 function that accepts the Express `req` and `res` objects and then returns a
 number.
 
-Defaults to `Infinity`.
+Defaults to `2147483647`.
+
+**Note**: Providing a value higher than `2,147,483,647` will throw an error due
+to Node.js `setTimeout` limits.
 
 For example, for the following configuration:
 

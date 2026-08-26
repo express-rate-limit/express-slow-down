@@ -111,4 +111,35 @@ describe('slowdown', () => {
 
 		await expectNoDelay(instance)
 	})
+
+	it('should throw an error if maxDelayMs is greater than 32-bit signed integer', async () => {
+		expect(() => {
+			slowDown({
+				maxDelayMs: 2_147_483_648,
+			})
+		}).toThrow(
+			"The 'maxDelayMs' option cannot be greater than 2147483647 due to Node.js setTimeout limits.",
+		)
+	})
+
+	it('should cap the delay at max32BitSignedInt by default', async () => {
+		const instance = slowDown({
+			validate: false,
+			delayAfter: 0,
+			delayMs: () => 3_000_000_000,
+		})
+
+		await expectDelay(instance, 2_147_483_647)
+	})
+
+	it('should allow setting maxDelayMs to exactly max32BitSignedInt', async () => {
+		const instance = slowDown({
+			validate: false,
+			delayAfter: 0,
+			delayMs: () => 3_000_000_000,
+			maxDelayMs: 2_147_483_647,
+		})
+
+		await expectDelay(instance, 2_147_483_647)
+	})
 })
