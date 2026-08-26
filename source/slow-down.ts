@@ -41,7 +41,7 @@ const filterUndefinedOptions = (
  * The maximum value for a 32-bit signed integer, which is the maximum
  * delay allowed by Node.js setTimeout.
  */
-const max32BitSignedInt = 2_147_483_647 // Equivalent to 2^31-1
+const max32BitSignedInt = 2 ** 31 - 1
 
 // Consider exporting then extending express-rate-limit's ValidationError
 class ExpressSlowDownWarning extends Error {
