@@ -214,7 +214,8 @@ number.
 Defaults to `2147483647` (2^31 - 1 ms, which is ~24 days).
 
 **Note**: Providing a value higher than `2,147,483,647` will throw an error due
-to [Node.js `setTimeout` limits](https://nodejs.org/api/timers.html#settimeoutcallback-delay-args:~:text=specified%2E-,When%20delay%20is%20larger%20than%202147483647%20or%20less%20than%201%20or%20NaN%2C%20the%20delay%20will%20be%20set%20to%201%2E%20Non%2Dinteger%20delays%20are%20truncated%20to%20an%20integer).
+to
+[Node.js `setTimeout` limits](https://nodejs.org/api/timers.html#settimeoutcallback-delay-args:~:text=specified%2E-,When%20delay%20is%20larger%20than%202147483647%20or%20less%20than%201%20or%20NaN%2C%20the%20delay%20will%20be%20set%20to%201%2E%20Non%2Dinteger%20delays%20are%20truncated%20to%20an%20integer).
 
 For example, for the following configuration:
 
