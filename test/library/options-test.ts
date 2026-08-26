@@ -1,6 +1,14 @@
 // /test/library/options-test.ts
 // Tests the parsing/handling of options passed in by the user
 
+import {
+	jest,
+	describe,
+	beforeEach,
+	afterEach,
+	it,
+	expect,
+} from '@jest/globals'
 import slowDown from '../../source/index.js'
 import { expectNoDelay } from '../helpers/requests.js'
 

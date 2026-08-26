@@ -2,6 +2,7 @@
 // Tests the middleware with a real Express application.
 
 import EventEmitter from 'node:events'
+import { jest, describe, expect, it } from '@jest/globals'
 // eslint-disable-next-line import/no-unassigned-import
 import 'jest-expect-message'
 import { type Application } from 'express'
@@ -59,7 +60,7 @@ describe('integration', () => {
 		const app = createServer(slowDown({ validate: false }))
 
 		const delay = await makeTimedRequest(app)
-		expect(delay, `First resp took too long: ${delay} ms.`).toBeLessThan(100)
+		expect(delay).toBeLessThan(100)
 	})
 
 	it('should apply a small delay to the second request', async () => {
@@ -71,15 +72,12 @@ describe('integration', () => {
 		)
 
 		let delay = await makeTimedRequest(app)
-		expect(delay, `First resp took too long: ${delay} ms.`).toBeLessThan(100)
+		expect(delay).toBeLessThan(100)
 
 		delay = await makeTimedRequest(app)
-		expect(
-			delay,
-			`Second resp was served too quickly: ${delay} ms.`,
-		).toBeGreaterThanOrEqual(100)
+		expect(delay).toBeGreaterThanOrEqual(100)
 		// Macos CI server is slow, and can add a 100-200ms of extra delay.
-		expect(delay, `Second resp took too long: ${delay} ms.`).toBeLessThan(400)
+		expect(delay).toBeLessThan(400)
 	})
 
 	it('should apply a larger delay to the subsequent request', async () => {
@@ -100,10 +98,8 @@ describe('integration', () => {
 		// Should be about 300ms delay on 4th request - because the multiplier starts at 0
 		// BUT, this test frequently fails with a delay in the 4-500ms range on CI.
 		// So, loosening up the range a bit here.
-		expect(
-			delay >= 250 && delay <= 600,
-			`Fourth resp was served too fast or slow: ${delay} ms.`,
-		).toBe(true)
+		expect(delay).toBeGreaterThanOrEqual(250)
+		expect(delay).toBeLessThanOrEqual(600)
 	})
 
 	it('should apply a cap of maxDelayMs on the the delay', async () => {
@@ -125,13 +121,8 @@ describe('integration', () => {
 
 		// Should cap the delay so the 4th request delays about 200ms instead of 300ms
 		// this one also likes to fail with too much delay on macOS in CI
-		expect(
-			delay,
-			`Fourth resp was served too fast: ${delay} ms.`,
-		).toBeGreaterThanOrEqual(150)
-		expect(delay, `Fourth resp was served too slow: ${delay} ms.`).toBeLessThan(
-			600,
-		)
+		expect(delay).toBeGreaterThanOrEqual(150)
+		expect(delay).toBeLessThan(600)
 	})
 
 	it('should allow delayAfter requests before delaying responses', async () => {
@@ -144,20 +135,13 @@ describe('integration', () => {
 		)
 
 		let delay = await makeTimedRequest(app)
-		expect(delay, `First resp was served too slow: ${delay} ms.`).toBeLessThan(
-			50,
-		)
+		expect(delay).toBeLessThan(50)
 
 		delay = await makeTimedRequest(app)
-		expect(delay, `Second resp was served too slow: ${delay} ms.`).toBeLessThan(
-			50,
-		)
+		expect(delay).toBeLessThan(50)
 
 		delay = await makeTimedRequest(app)
-		expect(
-			delay > 50 && delay < 150,
-			`Third request outside of range: ${delay} ms.`,
-		).toBe(true)
+		expect(delay > 50 && delay < 150).toBe(true)
 	})
 
 	it('should allow delayAfter to be a function', async () => {
@@ -170,20 +154,13 @@ describe('integration', () => {
 		)
 
 		let delay = await makeTimedRequest(app)
-		expect(delay, `First resp was served too slow: ${delay} ms.`).toBeLessThan(
-			50,
-		)
+		expect(delay).toBeLessThan(50)
 
 		delay = await makeTimedRequest(app)
-		expect(delay, `Second resp was served too slow: ${delay} ms.`).toBeLessThan(
-			50,
-		)
+		expect(delay).toBeLessThan(50)
 
 		delay = await makeTimedRequest(app)
-		expect(
-			delay > 50 && delay < 150,
-			`Third request outside of range: ${delay} ms.`,
-		).toBe(true)
+		expect(delay > 50 && delay < 150).toBe(true)
 	})
 
 	it('should (eventually) return to full speed', async () => {
@@ -205,9 +182,7 @@ describe('integration', () => {
 		await sleep(500)
 
 		const delay = await makeTimedRequest(app)
-		expect(delay, `Fourth resp was served too slow: ${delay} ms.`).toBeLessThan(
-			50,
-		)
+		expect(delay).toBeLessThan(50)
 	})
 
 	it('should work repeatedly (issues #2 & #3)', async () => {
@@ -228,9 +203,7 @@ describe('integration', () => {
 		await sleep(60)
 
 		let delay = await makeTimedRequest(app)
-		expect(delay, `Fourth resp was served too slow: ${delay} ms.`).toBeLessThan(
-			50,
-		)
+		expect(delay).toBeLessThan(50)
 
 		await Promise.all([
 			request(app).get('/'), // 1st - no delay
@@ -239,10 +212,7 @@ describe('integration', () => {
 		await sleep(60)
 
 		delay = await makeTimedRequest(app)
-		expect(
-			delay,
-			`Eventual resp was served too slow: ${delay} ms.`,
-		).toBeLessThan(50)
+		expect(delay).toBeLessThan(50)
 	})
 
 	it('should allow individual IP to be reset', async () => {
@@ -308,10 +278,7 @@ describe('integration', () => {
 		)
 
 		await request(app).get('/')
-		expect(
-			store.decrementWasCalled,
-			'`decrement` was not called on the store',
-		).toBeTruthy()
+		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
 	it('should decrement hits with failed response and skipFailedRequests', async () => {
@@ -325,10 +292,7 @@ describe('integration', () => {
 		)
 
 		await request(app).get('/error').expect(400)
-		expect(
-			store.decrementWasCalled,
-			'`decrement` was not called on the store',
-		).toBeTruthy()
+		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
 	it('should decrement hits with closed response and skipFailedRequests', async () => {
@@ -349,10 +313,7 @@ describe('integration', () => {
 
 		// eslint-disable-next-line no-promise-executor-return
 		await new Promise((resolve) => setTimeout(resolve, 200))
-		expect(
-			store.decrementWasCalled,
-			'`decrement` was not called on the store',
-		).toBeTruthy()
+		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
 	it('should decrement hits with response emitting error and skipFailedRequests', async () => {
@@ -366,10 +327,7 @@ describe('integration', () => {
 		)
 
 		await request(app).get('/crash')
-		expect(
-			store.decrementWasCalled,
-			'`decrement` was not called on the store',
-		).toBeTruthy()
+		expect(store.decrementWasCalled).toBeTruthy()
 	})
 
 	it('should not decrement hits with success response and skipFailedRequests', async () => {
@@ -383,10 +341,7 @@ describe('integration', () => {
 		)
 
 		await request(app).get('/')
-		expect(
-			store.decrementWasCalled,
-			'`decrement` was called on the store',
-		).toBeFalsy()
+		expect(store.decrementWasCalled).toBeFalsy()
 	})
 
 	it('should not execute slow down timer in case of req closed during delay', async () => {

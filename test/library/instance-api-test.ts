@@ -1,7 +1,7 @@
 // /test/library/instance-api-test.ts
 // Tests the instance API
 
-import { jest } from '@jest/globals'
+import { jest, describe, beforeEach, afterEach, it } from '@jest/globals'
 import slowDown from '../../source/index.js'
 import { expectDelay, expectNoDelay } from '../helpers/requests.js'
 

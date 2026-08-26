@@ -3,7 +3,14 @@
 
 import EventEmitter from 'node:events'
 import process from 'node:process'
-import { jest, expect, it, beforeEach, afterEach } from '@jest/globals'
+import {
+	jest,
+	describe,
+	beforeEach,
+	afterEach,
+	it,
+	expect,
+} from '@jest/globals'
 import slowDown from '../../source/index.js'
 import { expectDelay, expectNoDelay } from '../helpers/requests.js'
 import { MockStore } from '../helpers/mock-stores.js'
