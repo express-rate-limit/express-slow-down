@@ -37,6 +37,12 @@ const filterUndefinedOptions = (
 	return filteredOptions
 }
 
+/**
+ * The maximum value for a 32-bit signed integer, which is the maximum
+ * delay allowed by Node.js setTimeout.
+ */
+const max32BitSignedInt = 2_147_483_647 // Equivalent to 2^31-1
+
 // Consider exporting then extending express-rate-limit's ValidationError
 class ExpressSlowDownWarning extends Error {
 	name: string
@@ -77,6 +83,15 @@ export const slowDown = (
 		throw new Error(
 			'The limit/max option is not supported by express-slow-down, please use delayAfter instead.',
 		)
+
+	if (
+		typeof notUndefinedOptions.maxDelayMs === 'number' &&
+		notUndefinedOptions.maxDelayMs > max32BitSignedInt
+	) {
+		throw new Error(
+			`The 'maxDelayMs' option cannot be greater than ${max32BitSignedInt} due to Node.js setTimeout limits.`,
+		)
+	}
 
 	// Consolidate the validation options that have been passed by the user, and
 	// apply them later, along with `limit: false`.
@@ -128,7 +143,7 @@ export const slowDown = (
 			const delayAfter = request[options.requestPropertyName!].limit
 			return (used - delayAfter) * 1000
 		},
-		maxDelayMs: Number.POSITIVE_INFINITY,
+		maxDelayMs: max32BitSignedInt,
 		requestPropertyName: 'slowDown',
 		// Disable the headers by default, but allow users to override
 		legacyHeaders: false,
