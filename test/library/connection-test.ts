@@ -2,7 +2,14 @@
 // Tests the behaviour upon abrupt connection closure
 
 import EventEmitter from 'node:events'
-import { jest } from '@jest/globals'
+import {
+	jest,
+	describe,
+	beforeEach,
+	afterEach,
+	it,
+	expect,
+} from '@jest/globals'
 import slowDown from '../../source/index.js'
 
 describe('connection', () => {
