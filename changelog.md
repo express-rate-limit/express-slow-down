@@ -1,5 +1,12 @@
 # express-slow-down changelog
 
+## v3.1.1
+
+### Fixed
+
+- `delayMs` and `maxDelayMs` values can no longer go higher than `setTimeout()`
+  supports (~24 days)
+
 ## v3.1.0
 
 ### Added
