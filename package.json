@@ -99,7 +99,7 @@
     "prettier": "3.0.3",
     "supertest": "6.3.3",
     "ts-jest": "29.4.12",
-    "typescript": "5.2.2",
+    "typescript": "7.0.2",
     "xo": "0.56.0"
   },
   "xo": {
