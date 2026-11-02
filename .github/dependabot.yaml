@@ -1,0 +1,25 @@
+# /.github/dependabot.yaml
+# Configures GitHub's Dependabot.
+
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    # group all non-major dev dep updates together into a single PR
+    groups:
+      development-dependencies:
+        dependency-type: development
+        update-types: [minor, patch]
+    # production dependencies and major updates to dev deps get their own PRs
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    # and group all actions updates into a single PR
+    groups:
+      github-actions:
+        patterns:
+          - '*'
